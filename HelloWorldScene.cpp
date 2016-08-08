@@ -13,6 +13,7 @@ Scene* HelloWorld::createScene()
     return scene;
 }
 
+
 bool HelloWorld::init()
 {
     if ( !Layer::init() )
