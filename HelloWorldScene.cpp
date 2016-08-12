@@ -37,7 +37,7 @@ bool HelloWorld::init()
     
     
     
-    labelofstatusBar = Label::createWithSystemFont("RGB value", "Thonburi", 30, Size(500, 70), TextHAlignment::CENTER, TextVAlignment::TOP);
+    labelofstatusBar = Label::createWithSystemFont("RGB value", "Thonburi", 30, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
     labelofstatusBar->setColor(Color3B(0, 0, 0));
     labelofstatusBar->setAnchorPoint(Point(0.5, 1));
     labelofstatusBar->setPosition(Point(visibleSize.width/2, visibleSize.height*0.98));
@@ -66,8 +66,19 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
     this->addChild(colorImage);
     log("eh?");
     
+    int r = 0, g = 0, b = 0;
+    float T = 0.0, h = 0.0;
+    int *rptr, *gptr, *bptr;
+    float *Tptr, *hptr;
+    rptr = &r;
+    gptr = &g;
+    bptr = &b;
+    Tptr = &T;
+    hptr = &h;
     
     
+    
+    log("%d, %d, %d", *rptr, *gptr, *bptr);
     
     //터치되면 사라지게
     auto listener = EventListenerTouchOneByOne::create();
@@ -79,18 +90,17 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         
         
         
-        Color3B* temp1;
-        
-        getPixelData(temp1, touch);
-        
         return true;
     };
     
     listener->onTouchEnded = [=](Touch *touch, Event* event)
     {
         log("touch ended");
+        getPixelData(touch, rptr, gptr, bptr, Tptr, hptr);
         
     };
+    
+    
     
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
     
@@ -147,8 +157,14 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
 
 
 
-void HelloWorld::getPixelData(Color3B* color, Touch *touch)
+void HelloWorld::getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, float *Tptr, float *hptr)
 {
+    if (getChildByTag(10))
+    {
+        this->removeChildByTag(10);
+    }
+    
+    
     auto glView = Director::getInstance()->getOpenGLView();
     auto frameSize = glView->getFrameSize();
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
@@ -206,7 +222,7 @@ void HelloWorld::getPixelData(Color3B* color, Touch *touch)
             int touchX = touchPoint.x/visibleSize.width*frameSize.width;
             int touchY = touchPoint.y/visibleSize.height*frameSize.height;
             
-            int rectSize = 40/2;
+            int rectSize = 30/2;
             
             
             for(int i = touchX - rectSize; i < touchX + rectSize; ++i)
@@ -223,7 +239,7 @@ void HelloWorld::getPixelData(Color3B* color, Touch *touch)
                         sum_g += (int) g;
                         sum_b += (int) b;
                         cnt++;
-                        log("R : %d, G : %d, B : %d, Count : %d", r, g, b, cnt);
+                        //log("R : %d, G : %d, B : %d, Count : %d", r, g, b, cnt);
                         
                         /*
                         auto dot = DrawNode::create();
@@ -236,28 +252,43 @@ void HelloWorld::getPixelData(Color3B* color, Touch *touch)
             }
             
             
+            
+            
+            
             log("visible size : %f, %f", visibleSize.width, visibleSize.height);
             log("origin coor : %f, %f", origin.width, origin.height);
             log("framesize : %f, %f", frameSize.width, frameSize.height);
             log("%d, %d", touchX, touchY);
             log("%d, %d, %d", sum_r/cnt, sum_g/ cnt, sum_b/ cnt);
             
-            labelofstatusBar->setString(StringUtils::format("R : %d, G : %d, B : %d", sum_r/cnt, sum_g/ cnt, sum_b/ cnt));
             
             //*color = Color3B(sum_r/cnt, sum_g/ cnt, sum_b/ cnt);
+            *rptr = sum_r/cnt;
+            *gptr = sum_g/cnt;
+            *bptr = sum_b/cnt;
             templayer->initWithColor(Color4B(sum_r/cnt, sum_g/cnt, sum_b/cnt, 255), 200, 200);
             
-            if (getChildByTag(10))
-            {
-                this->removeChildByTag(10);
-            }
+            log("%d, %d, %d", *rptr, *gptr, *bptr);
+            
+            
+            /////////caculate h (CIECAM02)
+            //RGB2JCH::RGB2JCH();
+            RGB2JCH::getCIECAM02h(rptr, gptr, bptr, Tptr, hptr);
+            
+            
+            
+            labelofstatusBar->setString(StringUtils::format("R : %d, G : %d, B : %d\nT : %g, h = %g", sum_r/cnt, sum_g/ cnt, sum_b/ cnt, Rounding(*Tptr, 2),Rounding(*hptr, 2)));
+            
+            
+            
+            log("%f, %f", *Tptr, *hptr);
             
             auto rectNode = DrawNode::create();
             Vec2 rectangle[4];
-            rectangle[0] = Vec2(touchPoint.x, touchPoint.y);
-            rectangle[1] = Vec2(touchPoint.x+rectSize, touchPoint.y);
+            rectangle[0] = Vec2(touchPoint.x-rectSize, touchPoint.y-rectSize);
+            rectangle[1] = Vec2(touchPoint.x+rectSize, touchPoint.y-rectSize);
             rectangle[2] = Vec2(touchPoint.x+rectSize, touchPoint.y+rectSize);
-            rectangle[3] = Vec2(touchPoint.x, touchPoint.y+rectSize);
+            rectangle[3] = Vec2(touchPoint.x-rectSize, touchPoint.y+rectSize);
             
             Color4F white(1, 1, 1, 1);
             rectNode->drawLine(rectangle[0], rectangle[1], white);
@@ -267,9 +298,14 @@ void HelloWorld::getPixelData(Color3B* color, Touch *touch)
             this->addChild(rectNode);
             rectNode->setTag(10);
             
-            
-            
-            
+        
         }
     }while(0);
+    
+    
+}
+
+double HelloWorld::Rounding( double x, int digit )
+{
+    return ( floor( (x) * pow( float(10), digit ) + 0.5f ) / pow( float(10), digit ) );
 }
