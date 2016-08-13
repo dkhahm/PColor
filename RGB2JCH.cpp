@@ -41,22 +41,25 @@ void RGB2JCH::getCIECAM02h (int* r, int* g, int* b, float *T, float *h){
     struct CIECAM02vc myVC;
     struct CIECAM02color myColor;
     
+    //log("First :  %d, %d, %d", *r, *g, *b);
+    
     if ((*r == 0) && (*g == 0) && (*b == 0))
     {
         *b = 1;
     }
     
-    float var_R = ( *r / 255 );        //R from 0 to 255
-    float var_G = ( *g / 255 );        //G from 0 to 255
-    float var_B = ( *b / 255 );        //B from 0 to 255
+    float var_R = ((float) *r / 255.0 );        //R from 0 to 255
+    float var_G = ((float) *g / 255.0 );        //G from 0 to 255
+    float var_B = ((float) *b / 255.0 );        //B from 0 to 255
 
-    if ( var_R > 0.04045 ) var_R = ( ( var_R + 0.055 ) / 1.055 ) ^ 2.4; //can it be possible? no pow(a, b)?
-    else                   var_R = var_R / 12.92;
-    if ( var_G > 0.04045 ) var_G = ( ( var_G + 0.055 ) / 1.055 ) ^ 2.4;
-    else                   var_G = var_G / 12.92;
-    if ( var_B > 0.04045 ) var_B = ( ( var_B + 0.055 ) / 1.055 ) ^ 2.4;
-    else                   var_B = var_B / 12.92;
-
+    if (var_R > 0.04045) var_R = pow(((var_R + 0.055)/1.055), 2.4); //can it be possible? no pow(a, b)?
+    else var_R = var_R / 12.92;
+    if (var_G > 0.04045) var_G = pow(((var_G + 0.055)/1.055), 2.4);
+    else var_G = var_G / 12.92;
+    if (var_B > 0.04045) var_B = pow(((var_B + 0.055)/1.055), 2.4);
+    else var_B = var_B / 12.92;
+    //log("seconde :  %f, %f, %f", var_R, var_G, var_B);
+    
     var_R = var_R * 100;
     var_G = var_G * 100;
     var_B = var_B * 100;
@@ -66,6 +69,7 @@ void RGB2JCH::getCIECAM02h (int* r, int* g, int* b, float *T, float *h){
     float Y = var_R * 0.2126 + var_G * 0.7152 + var_B * 0.0722;
     float Z = var_R * 0.0193 + var_G * 0.1192 + var_B * 0.9505;
     
+    //log("!!!!!!!!!!!!%f, %f, %f", X, Y, Z);
     
     myColor.x = X;
     myColor.y = Y;
@@ -288,17 +292,17 @@ struct CIECAM02color RGB2JCH::forwardCIECAM02(struct CIECAM02color theColor, str
     
     xyz_to_cat02( &r , &g , &b , theColor.x, theColor.y, theColor.z );
     xyz_to_cat02( &rw, &gw, &bw, theVC.xw, theVC.yw, theVC.zw );
-    log("r:%f, g:%f, b:%f", r, g, b);
-    log("rw:%f, gw:%f, bw:%f", rw, gw, bw);
+    //log("r:%f, g:%f, b:%f", r, g, b);
+    //log("rw:%f, gw:%f, bw:%f", rw, gw, bw);
     
     
     rc = r * (((theVC.yw * theVC.d) / rw) + (1.0 - theVC.d));
     gc = g * (((theVC.yw * theVC.d) / gw) + (1.0 - theVC.d));
     bc = b * (((theVC.yw * theVC.d) / bw) + (1.0 - theVC.d));
-    log("rc:%f, gc:%f, bc:%f", rc, gc, bc);
+    //log("rc:%f, gc:%f, bc:%f", rc, gc, bc);
     cat02_to_hpe( &rp, &gp, &bp, rc, gc, bc);
     
-    log("rp:%f, gp:%f, bp:%f", rp, gp, bp);
+    //log("rp:%f, gp:%f, bp:%f", rp, gp, bp);
     
     rpa = nonlinear_adaptation( rp, theVC.fl );
     gpa = nonlinear_adaptation( gp, theVC.fl );
@@ -306,7 +310,7 @@ struct CIECAM02color RGB2JCH::forwardCIECAM02(struct CIECAM02color theColor, str
     
     ca = rpa - ((12.0 * gpa) / 11.0) + (bpa / 11.0);
     cb = (1.0 / 9.0) * (rpa + gpa - (2.0 * bpa));
-    log("ca:%f, cb:%f,rpa:%f, gpa:%f, bpa:%f", ca, cb, rpa, gpa, bpa);
+    //log("ca:%f, cb:%f,rpa:%f, gpa:%f, bpa:%f", ca, cb, rpa, gpa, bpa);
     
     theColor.h = (180.0 / M_PI) * atan2(cb, ca);
     if( theColor.h < 0.0 ) theColor.h += 360.0;

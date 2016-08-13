@@ -18,8 +18,17 @@ using namespace cocos2d;
 // https://github.com/qiankanglai/ImagePicker/issues/2
 -(void) takePicture
 {
+    
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
-    [imagePicker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+    if (UserDefault::getInstance()->getStringForKey("ImageSource") == "Camera")
+    {
+        [imagePicker setSourceType:UIImagePickerControllerSourceTypeCamera];
+    }
+    else
+    {
+        [imagePicker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+    }
+    
     [imagePicker setDelegate:self];
     imagePicker.wantsFullScreenLayout = YES;
     
@@ -27,6 +36,10 @@ using namespace cocos2d;
     UIView *view = (UIView *)Director::getInstance()->getOpenGLView()->getEAGLView();
     [view addSubview:imagePicker.view];
 }
+
+
+
+
 
 -(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {

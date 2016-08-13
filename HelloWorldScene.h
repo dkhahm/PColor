@@ -16,10 +16,12 @@ public:
     cocos2d::Size visibleSize;
     cocos2d::Size origin;
     LayerColor *templayer;
+    
     Label* labelofstatusBar;
     
     virtual bool init();
     
+    void MakingChoice();
     void didFinishPickingWithResult(cocos2d::Texture2D* result);
     
     void getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, float *Tptr, float *hptr);

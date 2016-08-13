@@ -27,60 +27,43 @@ bool HelloWorld::init()
     log("visible size : %f, %f", visibleSize.width, visibleSize.height);
     log("origin coor : %f, %f", origin.width, origin.height);
     
-
-    auto Backlayer = LayerColor::create(Color4B(255, 255, 255, 255));
-    Backlayer->setContentSize(Size(visibleSize.width, visibleSize.height));
-    
-    this->addChild(Backlayer);
-    
-    
-    
-    
-    
-    labelofstatusBar = Label::createWithSystemFont("RGB value", "Thonburi", 30, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
-    labelofstatusBar->setColor(Color3B(0, 0, 0));
-    labelofstatusBar->setAnchorPoint(Point(0.5, 1));
-    labelofstatusBar->setPosition(Point(visibleSize.width/2, visibleSize.height*0.98));
-    
-    this->addChild(labelofstatusBar);
-
-    ImagePicker::getInstance()->pickImage(this);
+    MakingChoice();
     
     
     return true;
 }
 
-
-void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
+void HelloWorld::MakingChoice()
 {
+    if (getChildByTag(11))
+    {
+        this->removeChildByTag(11);
+    }
+    
+    
+    
+    auto Backlayer = LayerColor::create(Color4B(255, 255, 255, 255));
+    Backlayer->setContentSize(Size(visibleSize.width, visibleSize.height));
+    Backlayer->setTag(10);
+    this->addChild(Backlayer);
+    
+    auto labelofCamera = Label::createWithSystemFont("Camera", "Thonburi", 30, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
+    labelofCamera->setColor(Color3B(0, 0, 0));
+    labelofCamera->setAnchorPoint(Point(0.5, 1));
+    labelofCamera->setPosition(Point(visibleSize.width*0.8, visibleSize.height/2));
+    
+    Backlayer->addChild(labelofCamera);
+    
+    auto labelofAlbum = Label::createWithSystemFont("Album", "Thonburi", 30, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
+    labelofAlbum->setColor(Color3B(0, 0, 0));
+    labelofAlbum->setAnchorPoint(Point(0.5, 1));
+    labelofAlbum->setPosition(Point(visibleSize.width*0.2, visibleSize.height/2));
+    
+    Backlayer->addChild(labelofAlbum);
     
     
     
     
-    //auto rectSize = Rect(100, 100, 300, 300);
-    
-    auto colorImage = Sprite::createWithTexture(result);
-    colorImage->setPosition(visibleSize.width/2, 500);
-    //colorImage->setContentSize(Size(visibleSize.width/2, visibleSize.height/2));
-    colorImage->setAnchorPoint(Point(0.5, 0.5));
-    this->addChild(colorImage);
-    log("eh?");
-    
-    int r = 0, g = 0, b = 0;
-    float T = 0.0, h = 0.0;
-    int *rptr, *gptr, *bptr;
-    float *Tptr, *hptr;
-    rptr = &r;
-    gptr = &g;
-    bptr = &b;
-    Tptr = &T;
-    hptr = &h;
-    
-    
-    
-    log("%d, %d, %d", *rptr, *gptr, *bptr);
-    
-    //터치되면 사라지게
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     
@@ -96,20 +79,126 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
     listener->onTouchEnded = [=](Touch *touch, Event* event)
     {
         log("touch ended");
-        getPixelData(touch, rptr, gptr, bptr, Tptr, hptr);
+        auto touchPoint = touch->getLocation();
         
+        if (touchPoint.x > visibleSize.width/2)
+        {
+            log("touchpoint : %f, visiblesize : %f", touchPoint.x, visibleSize.width/2);
+            UserDefault::getInstance()->setStringForKey("ImageSource", "Camera");
+        }
+        else
+        {
+            UserDefault::getInstance()->setStringForKey("ImageSource", "Album");
+        }
+        
+        ImagePicker::getInstance()->pickImage(this);
+        //_eventDispatcher->removeAllEventListeners();
     };
     
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, Backlayer);
+
+}
+
+
+void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
+{
     
     
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+    if (result != nullptr)
+    {
+        
+        if (getChildByTag(10))
+        {
+            this->removeChildByTag(10);
+        }
+        
+        auto BacklayerResult = LayerColor::create(Color4B(255, 255, 255, 255));
+        BacklayerResult->setContentSize(Size(visibleSize.width, visibleSize.height));
+        BacklayerResult->setTag(11);
+        this->addChild(BacklayerResult);
+        
+        labelofstatusBar = Label::createWithSystemFont("RGB value", "Thonburi", 30, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
+        labelofstatusBar->setColor(Color3B(0, 0, 0));
+        labelofstatusBar->setAnchorPoint(Point(0.5, 1));
+        labelofstatusBar->setPosition(Point(visibleSize.width/2, visibleSize.height*0.98));
+        
+        BacklayerResult->addChild(labelofstatusBar);
+        
+        auto labelofErase = Label::createWithSystemFont("Re-Choice", "Thonburi", 30, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
+        labelofErase->setColor(Color3B(0, 0, 0));
+        labelofErase->setAnchorPoint(Point(0.5, 1));
+        labelofErase->setPosition(Point(visibleSize.width*0.9, visibleSize.height*0.9));
+        
+        BacklayerResult->addChild(labelofErase);
+        
+        
+        
+        //auto rectSize = Rect(100, 100, 300, 300);
+    
+        auto colorImage = Sprite::createWithTexture(result);
+        colorImage->setPosition(visibleSize.width/2, 500);
+        //colorImage->setContentSize(Size(visibleSize.width/2, visibleSize.height/2));
+        colorImage->setAnchorPoint(Point(0.5, 0.5));
+        BacklayerResult->addChild(colorImage);
+        log("eh?");
+    
+        int r = 0, g = 0, b = 0;
+        float T = 0.0, h = 0.0;
+        int *rptr, *gptr, *bptr;
+        float *Tptr, *hptr;
+        rptr = &r;
+        gptr = &g;
+        bptr = &b;
+        Tptr = &T;
+        hptr = &h;
     
     
     
-    templayer = LayerColor::create(Color4B(100, 100, 100, 255), 200, 200);
-    templayer->setPosition(Point(visibleSize.width/2-100, visibleSize.height*0.75));
-    this->addChild(templayer);
+        log("%d, %d, %d", *rptr, *gptr, *bptr);
     
+        //터치되면 사라지게
+        auto listener = EventListenerTouchOneByOne::create();
+        listener->setSwallowTouches(true);
+    
+        listener->onTouchBegan = [=](Touch *touch, Event* event)
+        {
+            log("touch began");
+        
+        
+        
+            return true;
+        };
+    
+        listener->onTouchEnded = [=](Touch *touch, Event* event)
+        {
+            log("touch ended");
+            
+            auto touchPoint = touch->getLocation();
+            
+            if (touchPoint.y < visibleSize.height*0.8)
+            {
+                log("get pixel data");
+                getPixelData(touch, rptr, gptr, bptr, Tptr, hptr);
+            }
+            
+            else
+            {
+                log("return");
+                MakingChoice();
+            }
+        };
+    
+    
+    
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, BacklayerResult);
+        
+    
+    
+        templayer = LayerColor::create(Color4B(100, 100, 100, 255), 200, 200);
+        templayer->setPosition(Point(visibleSize.width/2-100, visibleSize.height*0.75));
+        BacklayerResult->addChild(templayer);
+    
+    }
     
     /*
     
