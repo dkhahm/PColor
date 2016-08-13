@@ -38,17 +38,38 @@ RGB2JCH::RGB2JCH(){
 
 void RGB2JCH::getCIECAM02h (int* r, int* g, int* b, float *T, float *h){
     
-    
     struct CIECAM02vc myVC;
     struct CIECAM02color myColor;
     
-    myColor.x = *r;
-    myColor.y = *g;
-    myColor.z = *b;
+    if ((*r == 0) && (*g == 0) && (*b == 0))
+    {
+        *b = 1;
+    }
     
-    if (myColor.x == 0) myColor.x = 1;
-    if (myColor.y == 0) myColor.y = 1;
-    if (myColor.z == 0) myColor.z = 1;
+    float var_R = ( *r / 255 );        //R from 0 to 255
+    float var_G = ( *g / 255 );        //G from 0 to 255
+    float var_B = ( *b / 255 );        //B from 0 to 255
+
+    if ( var_R > 0.04045 ) var_R = ( ( var_R + 0.055 ) / 1.055 ) ^ 2.4; //can it be possible? no pow(a, b)?
+    else                   var_R = var_R / 12.92;
+    if ( var_G > 0.04045 ) var_G = ( ( var_G + 0.055 ) / 1.055 ) ^ 2.4;
+    else                   var_G = var_G / 12.92;
+    if ( var_B > 0.04045 ) var_B = ( ( var_B + 0.055 ) / 1.055 ) ^ 2.4;
+    else                   var_B = var_B / 12.92;
+
+    var_R = var_R * 100;
+    var_G = var_G * 100;
+    var_B = var_B * 100;
+
+    //Observer. = 2°, Illuminant = D65
+    float X = var_R * 0.4124 + var_G * 0.3576 + var_B * 0.1805;
+    float Y = var_R * 0.2126 + var_G * 0.7152 + var_B * 0.0722;
+    float Z = var_R * 0.0193 + var_G * 0.1192 + var_B * 0.9505;
+    
+    
+    myColor.x = X;
+    myColor.y = Y;
+    myColor.z = Z;
     
     
     //FILE *myViewingConditions, *myInput, *myOutput;
@@ -447,12 +468,8 @@ int RGB2JCH::XYZtoCorColorTemp(struct CIECAM02color *theColor)
     double us, vs, p, di, dm;
     int i;
     
-    if (theColor->x < 1.0e-20) theColor->x = 1;
-    if (theColor->y < 1.0e-20) theColor->y = 1;
-    if (theColor->z < 1.0e-20) theColor->z = 1;
-    /*
     if ((theColor->x < 1.0e-20) && (theColor->y < 1.0e-20) && (theColor->z < 1.0e-20))
-        return(-1);*/
+        return(-1);
      /* protect against possible divide-by-zero failure */
     
     
