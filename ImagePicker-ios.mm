@@ -43,6 +43,9 @@ using namespace cocos2d;
 
 -(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    //auto origin = Director::getInstance()->getVisibleOrigin();
+    
     Image *image = new Image();
     
     @autoreleasepool
@@ -50,7 +53,7 @@ using namespace cocos2d;
         UIImage *img = [info objectForKey:UIImagePickerControllerOriginalImage];
         //
         
-        img = [self scaleImage:img toSize:CGSizeMake(500,800)]; // or some other size
+        img = [self scaleImage:img toSize:CGSizeMake(visibleSize.width,visibleSize.height)]; // or some other size
         //
         NSData *imgData = UIImagePNGRepresentation(img);
         NSUInteger len = [imgData length];

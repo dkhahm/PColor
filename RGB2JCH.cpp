@@ -14,12 +14,13 @@ USING_NS_CC;
 
 struct CIECAM02color {
     double x, y, z;
-    double J, C, h=0, H;
+    double J, C, h, H;
     double Q, M, s;
     double ac, bc;
     double as, bs;
     double am, bm;
     double T;
+    double a, b;
 };
 
 struct CIECAM02vc {
@@ -36,7 +37,7 @@ RGB2JCH::RGB2JCH(){
 
 
 
-void RGB2JCH::getCIECAM02h (int* r, int* g, int* b, float *T, float *h){
+void RGB2JCH::getCIECAM02h (int* r, int* g, int* b, float *T, float *h, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr){
     
     struct CIECAM02vc myVC;
     struct CIECAM02color myColor;
@@ -165,10 +166,14 @@ void RGB2JCH::getCIECAM02h (int* r, int* g, int* b, float *T, float *h){
     */
     myColor = forwardCIECAM02(myColor, myVC);
     
-
+//, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr
     *T = myColor.T;
     *h = myColor.h;
-    
+    *Hptr = myColor.H;
+    *cieaptr = myColor.a;
+    *ciebptr = myColor.b;
+    *Jptr = myColor.J;
+    *Cptr = myColor.C;
 }
 
 
@@ -311,6 +316,9 @@ struct CIECAM02color RGB2JCH::forwardCIECAM02(struct CIECAM02color theColor, str
     ca = rpa - ((12.0 * gpa) / 11.0) + (bpa / 11.0);
     cb = (1.0 / 9.0) * (rpa + gpa - (2.0 * bpa));
     //log("ca:%f, cb:%f,rpa:%f, gpa:%f, bpa:%f", ca, cb, rpa, gpa, bpa);
+    
+    theColor.a = ca;
+    theColor.b = cb;
     
     theColor.h = (180.0 / M_PI) * atan2(cb, ca);
     if( theColor.h < 0.0 ) theColor.h += 360.0;
