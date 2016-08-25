@@ -37,7 +37,7 @@ RGB2JCH::RGB2JCH(){
 
 
 
-void RGB2JCH::getCIECAM02h (int* r, int* g, int* b, float *T, float *h, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr){
+void RGB2JCH::getCIECAM02h (int* r, int* g, int* b, float *T, float *h, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr, float *Qptr, float *acptr, float *bcptr, float *amptr, float *bmptr, float *asptr, float *bsptr){
     
     struct CIECAM02vc myVC;
     struct CIECAM02color myColor;
@@ -166,7 +166,7 @@ void RGB2JCH::getCIECAM02h (int* r, int* g, int* b, float *T, float *h, float *H
     */
     myColor = forwardCIECAM02(myColor, myVC);
     
-//, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr
+//, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr, float *Qptr, float *acptr, float *bcptr, float *amptr, float *bmptr, float *asptr, float *bsptr
     *T = myColor.T;
     *h = myColor.h;
     *Hptr = myColor.H;
@@ -174,6 +174,14 @@ void RGB2JCH::getCIECAM02h (int* r, int* g, int* b, float *T, float *h, float *H
     *ciebptr = myColor.b;
     *Jptr = myColor.J;
     *Cptr = myColor.C;
+    *Qptr = myColor.Q;
+    *acptr = myColor.ac;
+    *bcptr = myColor.bc;
+    *amptr = myColor.am;
+    *bmptr = myColor.bm;
+    *asptr = myColor.as;
+    *bsptr = myColor.bs;
+    
 }
 
 

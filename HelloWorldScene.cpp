@@ -44,25 +44,32 @@ void HelloWorld::MakingChoice()
     
     
     
-    auto Backlayer = LayerColor::create(Color4B(255, 255, 255, 255));
+    auto Backlayer = LayerColor::create(Color4B(240, 240, 240, 255));
     Backlayer->setContentSize(Size(visibleSize.width, visibleSize.height));
     Backlayer->setTag(10);
     this->addChild(Backlayer);
     
+    auto magentaCircle = Sprite::create("circle(magenta).png");
+    magentaCircle->setAnchorPoint(Point(0.5, 0.5));
+    magentaCircle->setOpacity(30);
+    magentaCircle->setPosition(Point(visibleSize.width/2, visibleSize.height*0.6));
+    Backlayer->addChild(magentaCircle);
+    
+    
+    
     auto labelofCamera = Label::createWithSystemFont("Camera", "Thonburi", 30, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
     labelofCamera->setColor(Color3B(0, 0, 0));
     labelofCamera->setAnchorPoint(Point(0.5, 1));
-    labelofCamera->setPosition(Point(visibleSize.width*0.8, visibleSize.height/2));
+    labelofCamera->setPosition(Point(visibleSize.width*0.9, visibleSize.height/2));
     
     Backlayer->addChild(labelofCamera);
     
     auto labelofAlbum = Label::createWithSystemFont("Album", "Thonburi", 30, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
     labelofAlbum->setColor(Color3B(0, 0, 0));
     labelofAlbum->setAnchorPoint(Point(0.5, 1));
-    labelofAlbum->setPosition(Point(visibleSize.width*0.2, visibleSize.height/2));
+    labelofAlbum->setPosition(Point(visibleSize.width*0.1, visibleSize.height/2));
     
     Backlayer->addChild(labelofAlbum);
-    
     
     
     
@@ -102,6 +109,9 @@ void HelloWorld::MakingChoice()
 }
 
 
+
+
+
 void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
 {
     
@@ -114,12 +124,12 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
             this->removeChildByTag(10);
         }
         
-        auto BacklayerResult = LayerColor::create(Color4B(255, 255, 255, 255));
+        auto BacklayerResult = LayerColor::create(Color4B(240, 240, 240, 255));
         BacklayerResult->setContentSize(Size(visibleSize.width, visibleSize.height));
         BacklayerResult->setTag(11);
         this->addChild(BacklayerResult);
         
-        labelofstatusBar = Label::createWithSystemFont("CIECAM02 value", "Thonburi", 30, Size(700, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
+        labelofstatusBar = Label::createWithSystemFont("CIECAM02 value", "Thonburi", 30, Size(700, 350), TextHAlignment::CENTER, TextVAlignment::TOP);
         labelofstatusBar->setColor(Color3B(0, 0, 0));
         labelofstatusBar->setAnchorPoint(Point(0.5, 1));
         labelofstatusBar->setPosition(Point(visibleSize.width/2, visibleSize.height*0.98));
@@ -160,40 +170,26 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         colorImage->setAnchorPoint(Point(0.5, 0.5));
         clipping->addChild(colorImage);
         
-        //_scrolling = false;
+        _scrolling = false;
         
-        /*
+        
         auto listener = EventListenerTouchAllAtOnce::create();
         listener->onTouchesBegan = CC_CALLBACK_2(HelloWorld::onTouchesBegan, this);
         listener->onTouchesMoved = CC_CALLBACK_2(HelloWorld::onTouchesMoved, this);
         listener->onTouchesEnded = CC_CALLBACK_2(HelloWorld::onTouchesEnded, this);
         _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, BacklayerResult);
-        */
+        
         
         //BacklayerResult->addChild(colorImage);
         log("eh?");
     
-        int r = 0, g = 0, b = 0;
-        float T = 0.0, h = 0.0, H = 0.0, ciea = 0.0, cieb = 0.0, J = 0.0, C = 0.0;
-        int *rptr, *gptr, *bptr;
-        float *Tptr, *hptr, *Hptr, *cieaptr, *ciebptr, *Jptr, *Cptr;
-        rptr = &r;
-        gptr = &g;
-        bptr = &b;
-        Tptr = &T;
-        hptr = &h;
-        Hptr = &H;
-        cieaptr = &ciea;
-        ciebptr = &cieb;
-        Jptr = &J;
-        Cptr = &C;
+        
     
-    
-    
-        log("%d, %d, %d", *rptr, *gptr, *bptr);
+        
     
         
         //
+        /*
         auto listener = EventListenerTouchOneByOne::create();
         listener->setSwallowTouches(true);
     
@@ -215,7 +211,7 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
             if (touchPoint.y < visibleSize.height*0.8)
             {
                 log("get pixel data");
-                getPixelData(touch, rptr, gptr, bptr, Tptr, hptr, Hptr, cieaptr, ciebptr, Jptr, Cptr);
+                getPixelData(touch, rptr, gptr, bptr, Tptr, hptr, Hptr, cieaptr, ciebptr, Jptr, Cptr, Qptr, acptr, bcptr, amptr, bmptr, asptr, bsptr);
             }
             
             else
@@ -228,7 +224,7 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
     
     
         _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, BacklayerResult);
-        
+        */
     
     
         templayer = LayerColor::create(Color4B(100, 100, 100, 255), 200, 200);
@@ -283,16 +279,27 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
 */
 }
 
-/*
+
+
 void HelloWorld::onTouchesBegan(const std::vector<Touch*>& touches, Event  *event)
 {
     log("touch began");
-    Touch *touch = touches[0];
+    Touch *touch = touches.front();
     auto clipper = this->getChildByTag(11)->getChildByTag(13);
     Vec2 point = clipper->convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
-    auto rect = Rect(0, 0, clipper->getContentSize().width, clipper->getContentSize().height);
-    _scrolling = rect.containsPoint(point);
+   
     _lastPoint = point;
+    _firstPoint = point;
+    
+    auto determinInOut = sqrtf(pow(std::abs(touch->getLocation().x - visibleSize.width/2), 2)+pow(std::abs(touch->getLocation().y - visibleSize.height/2), 2));
+    log("%f", determinInOut);
+    
+    if(determinInOut < 300) _scrolling = true;
+    else _scrolling = false;
+    
+    //auto rect = Rect(visibleSize.width/2-300, visibleSize.height/2-300, 600, 600);
+    //_scrolling = rect.containsPoint(point);
+
 }
 
 void HelloWorld::onTouchesMoved(const std::vector<Touch*>& touches, Event  *event)
@@ -310,20 +317,63 @@ void HelloWorld::onTouchesMoved(const std::vector<Touch*>& touches, Event  *even
 
 void HelloWorld::onTouchesEnded(const std::vector<Touch*>& touches, Event  *event)
 {
+    auto firstClick = touches.front();
+    
     log("touch ended");
-    if (!_scrolling) return;
+    
+    if (!_scrolling)
+    {
+        if(firstClick->getLocation().y > visibleSize.height*0.85)
+        {
+            log("%f", firstClick->getLocation().y);
+            MakingChoice();
+        }
+        return;
+    }
+    
+    if(_firstPoint == _lastPoint)
+    {
+        TrigerGetPixelData(firstClick);
+        
+    }
     _scrolling = false;
 }
- */
 
-
-
-
-void HelloWorld::getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, float *Tptr, float *hptr, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr)
+void HelloWorld::TrigerGetPixelData(Touch *touch)
 {
-    if (getChildByTag(10))
+    int r = 0, g = 0, b = 0;
+    float T = 0.0, h = 0.0, H = 0.0, ciea = 0.0, cieb = 0.0, J = 0.0, C = 0.0, Q = 0.0, ac = 0.0, bc =0.0, am = 0.0, bm = 0.0, as = 0.0, bs =0.0;
+    int *rptr, *gptr, *bptr;
+    float *Tptr, *hptr, *Hptr, *cieaptr, *ciebptr, *Jptr, *Cptr, *Qptr, *acptr, *bcptr, *amptr, *bmptr, *asptr, *bsptr;
+    rptr = &r;
+    gptr = &g;
+    bptr = &b;
+    Tptr = &T;
+    hptr = &h;
+    Hptr = &H;
+    cieaptr = &ciea;
+    ciebptr = &cieb;
+    Jptr = &J;
+    Cptr = &C;
+    Qptr = &Q;
+    acptr = &ac;
+    bcptr = &bc;
+    amptr = &am;
+    bmptr =&bm;
+    asptr = &as;
+    bsptr = &bs;
+    
+    getPixelData(touch, rptr, gptr, bptr, Tptr, hptr, Hptr, cieaptr, ciebptr, Jptr, Cptr, Qptr, acptr, bcptr, amptr, bmptr, asptr, bsptr);
+
+}
+
+
+
+void HelloWorld::getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, float *Tptr, float *hptr, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr, float *Qptr, float *acptr, float *bcptr, float *amptr, float *bmptr, float *asptr, float *bsptr)
+{
+    if (this->getChildByTag(11)->getChildByTag(13)->getChildByTag(14)->getChildByTag(10))
     {
-        this->removeChildByTag(10);
+        this->getChildByTag(11)->getChildByTag(13)->getChildByTag(14)->removeChildByTag(10);
     }
     
     
@@ -435,29 +485,44 @@ void HelloWorld::getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, flo
             
             /////////caculate h (CIECAM02)
             //RGB2JCH::RGB2JCH();
-            RGB2JCH::getCIECAM02h(rptr, gptr, bptr, Tptr, hptr, Hptr, cieaptr, ciebptr, Jptr, Cptr);
+            RGB2JCH::getCIECAM02h(rptr, gptr, bptr, Tptr, hptr, Hptr, cieaptr, ciebptr, Jptr, Cptr, Qptr, acptr, bcptr, amptr, bmptr, asptr, bsptr);
             
             
             
-            labelofstatusBar->setString(StringUtils::format("J : %g, C : %g, h : %g, H : %g\na : %g, b = %g, T = %g", Rounding(*Jptr, 2), Rounding(*Cptr, 2), Rounding(*hptr, 2) ,Rounding(*Hptr, 2), Rounding(*cieaptr, 3), Rounding(*ciebptr, 3), Rounding(*Tptr, 2)));
-            
-            
+            labelofstatusBar->setString(StringUtils::format("J : %g, C : %g, h : %g, H : %g\na : %g, b = %g, T = %g\nQ = %g, ac = %g, bc = %g\nam = %g, bm = %g\nas = %g, bs = %g", Rounding(*Jptr, 2), Rounding(*Cptr, 2), Rounding(*hptr, 2) ,Rounding(*Hptr, 2), Rounding(*cieaptr, 3), Rounding(*ciebptr, 3), Rounding(*Tptr, 2), Rounding(*Qptr, 2), Rounding(*acptr, 2), Rounding(*bcptr, 2), Rounding(*amptr, 2), Rounding(*bmptr, 2), Rounding(*asptr, 2), Rounding(*bsptr, 2)));
             
             log("%f, %f", *Tptr, *hptr);
             
+            
+            /*
+             Touch *touch = touches[0];
+             auto clipper = this->getChildByTag(11)->getChildByTag(13);
+             auto point = clipper->convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
+             Vec2 diff = point - _lastPoint;
+             auto content = clipper->getChildByTag(14);
+             content->setPosition(content->getPosition() + diff);
+             _lastPoint = point;
+            */
+            
+            auto tempImage = this->getChildByTag(11)->getChildByTag(13)->getChildByTag(14);
+            auto tempPoint = tempImage->convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
+            
+            
+            
             auto rectNode = DrawNode::create();
             Vec2 rectangle[4];
-            rectangle[0] = Vec2(touchPoint.x-rectSize, touchPoint.y-rectSize);
-            rectangle[1] = Vec2(touchPoint.x+rectSize, touchPoint.y-rectSize);
-            rectangle[2] = Vec2(touchPoint.x+rectSize, touchPoint.y+rectSize);
-            rectangle[3] = Vec2(touchPoint.x-rectSize, touchPoint.y+rectSize);
+            rectangle[0] = Vec2(tempPoint.x-rectSize, tempPoint.y-rectSize);
+            rectangle[1] = Vec2(tempPoint.x+rectSize, tempPoint.y-rectSize);
+            rectangle[2] = Vec2(tempPoint.x+rectSize, tempPoint.y+rectSize);
+            rectangle[3] = Vec2(tempPoint.x-rectSize, tempPoint.y+rectSize);
             
             Color4F white(1, 1, 1, 1);
             rectNode->drawLine(rectangle[0], rectangle[1], white);
             rectNode->drawLine(rectangle[1], rectangle[2], white);
             rectNode->drawLine(rectangle[2], rectangle[3], white);
             rectNode->drawLine(rectangle[3], rectangle[0], white);
-            this->addChild(rectNode);
+            this->getChildByTag(11)->getChildByTag(13)->getChildByTag(14)->addChild(rectNode);
+            //this->addChild(rectNode);
             rectNode->setTag(10);
             
         

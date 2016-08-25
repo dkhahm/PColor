@@ -14,7 +14,7 @@ public:
 
     RGB2JCH();
     
-    static void getCIECAM02h (int* r, int* g, int* b, float *T, float *h, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr);
+    static void getCIECAM02h (int* r, int* g, int* b, float *T, float *h, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr, float *Qptr, float *acptr, float *bcptr, float *amptr, float *bmptr, float *asptr, float *bsptr);
 
 private:
     
