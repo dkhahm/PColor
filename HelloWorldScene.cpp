@@ -493,6 +493,8 @@ void HelloWorld::getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, flo
             
             log("%f, %f", *Tptr, *hptr);
             
+            displayStatus(Jptr, amptr, bmptr);
+            
             
             /*
              Touch *touch = touches[0];
@@ -531,6 +533,46 @@ void HelloWorld::getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, flo
     
     
 }
+
+void HelloWorld::displayStatus(float *Jptr, float *amptr, float *bmptr)
+{
+    //동그라미 진도의 아래 깔리는 배경, 흰색 원
+    auto circleForNo = Sprite::create("iosCircleOutline(black).png");
+    circleForNo->setPosition(Point(visibleSize.width*0.5, visibleSize.height*0.3));
+    circleForNo->setAnchorPoint(Point(0.5, 0.5));
+    circleForNo->setOpacity(20);
+    this->getChildByTag(11)->addChild(circleForNo);
+    
+    
+    //동그라미 진도의 위에 진도 표시해 주는 파란색 원
+    auto circleForNoBlue = Sprite::create("iosCircleOutline(cyam).png");
+    ProgressTimer *ppT;
+    ppT = ProgressTimer::create(circleForNoBlue);
+    ppT->setType(ProgressTimer::Type::RADIAL);
+    ppT->setPosition(Point(visibleSize.width*0.5, visibleSize.height*0.3));
+    ppT->setAnchorPoint(Point(0.5, 0.5));
+    this->getChildByTag(11)->addChild(ppT);
+    
+    //동그라미 진도를 오파시티 0에서 255까지 적용 5초에 걸쳐서
+    auto fadeforRadial = Sequence::create(FadeTo::create(5.0f, 255),
+                                          NULL);
+    
+    
+    log("%f", *Jptr);
+
+    auto toRadial1 = ProgressTo::create(3.0f, *Jptr);
+    ppT->setOpacity(0);
+    ppT->runAction(toRadial1->clone());//클론 기능은 나중에 공부좀 하자
+    ppT->runAction(fadeforRadial->clone());
+    
+    
+    auto labelofNoperday = Label::createWithSystemFont(std::to_string(*Jptr)+std::string("%"), "Thonburi", visibleSize.width*0.058, Size(visibleSize.width*0.2, visibleSize.height*0.2), TextHAlignment::CENTER, TextVAlignment::CENTER);
+    labelofNoperday->setColor(Color3B(255, 228, 0));
+    labelofNoperday->setPosition(Point(visibleSize.width*0.5, visibleSize.height*0.3));
+    this->getChildByTag(11)->addChild(labelofNoperday);
+}
+
+
 
 double HelloWorld::Rounding( double x, int digit )
 {

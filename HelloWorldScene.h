@@ -34,6 +34,7 @@ public:
     virtual bool init();
     
     void MakingChoice();
+    void displayStatus(float *Jptr, float *amptr, float *bmptr);
     void didFinishPickingWithResult(cocos2d::Texture2D* result);
     void TrigerGetPixelData(Touch *touch);
     void getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, float *Tptr, float *hptr, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr, float *Qptr, float *acptr, float *bcptr, float *amptr, float *bmptr, float *asptr, float *bsptr);
