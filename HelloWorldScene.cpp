@@ -755,10 +755,11 @@ void HelloWorld::displayStatus(float *Jptr, float *amptr, float *bmptr)
         ppTforBlue->runAction(fadeforRadial->clone());
     }
     
-    auto labelofRed = Label::createWithSystemFont(std::string("0 %"), "Thonburi", 30, Size(visibleSize.width*0.2, visibleSize.height*0.2), TextHAlignment::CENTER, TextVAlignment::CENTER);
+    auto labelofRed = Label::createWithSystemFont(std::string("0"), "Thonburi", 30, Size(visibleSize.width*0.2, visibleSize.height*0.2), TextHAlignment::CENTER, TextVAlignment::CENTER);
     labelofRed->setColor(Color3B(0, 0, 0));
     labelofRed->setPosition(Point(visibleSize.width*0.2, visibleSize.height*0.405));
     labelofRed->setAnchorPoint(Point(0.5, 0.5));
+    labelofRed->setTag(21);
     layer_For_Progress->addChild(labelofRed);
     if(valueOfr != 0)
     {
@@ -768,10 +769,11 @@ void HelloWorld::displayStatus(float *Jptr, float *amptr, float *bmptr)
     if(valueOfr < 0) labelofNo1_L->setColor(Color3B(29, 219, 22));
     if(valueOfr > 0) labelofNo1_R->setColor(Color3B(255, 0, 0));
     
-    auto labelofBright = Label::createWithSystemFont(std::string("0 %"), "Thonburi", 30, Size(visibleSize.width*0.2, visibleSize.height*0.2), TextHAlignment::CENTER, TextVAlignment::CENTER);
+    auto labelofBright = Label::createWithSystemFont(std::string("0"), "Thonburi", 30, Size(visibleSize.width*0.2, visibleSize.height*0.2), TextHAlignment::CENTER, TextVAlignment::CENTER);
     labelofBright->setColor(Color3B(0, 0, 0));
     labelofBright->setPosition(Point(visibleSize.width*0.5, visibleSize.height*0.385));
     labelofBright->setAnchorPoint(Point(0.5, 0.5));
+    labelofBright->setTag(22);
     layer_For_Progress->addChild(labelofBright);
     if(valueOfJ != 0)
     {
@@ -779,10 +781,11 @@ void HelloWorld::displayStatus(float *Jptr, float *amptr, float *bmptr)
         count(labelofBright, 0, valueOfJ, IntervalJ);
     }
     
-    auto labelofYellow = Label::createWithSystemFont(std::string("0 %"), "Thonburi", 30, Size(visibleSize.width*0.2, visibleSize.height*0.2), TextHAlignment::CENTER, TextVAlignment::CENTER);
+    auto labelofYellow = Label::createWithSystemFont(std::string("0"), "Thonburi", 30, Size(visibleSize.width*0.2, visibleSize.height*0.2), TextHAlignment::CENTER, TextVAlignment::CENTER);
     labelofYellow->setColor(Color3B(0, 0, 0));
     labelofYellow->setPosition(Point(visibleSize.width*0.8, visibleSize.height*0.405));
     labelofYellow->setAnchorPoint(Point(0.5, 0.5));
+    labelofYellow->setTag(23);
     layer_For_Progress->addChild(labelofYellow);
     if(valueOfy != 0)
     {
@@ -797,69 +800,28 @@ void HelloWorld::displayStatus(float *Jptr, float *amptr, float *bmptr)
 
 void HelloWorld::count(Label *lbl, int from, int to, float interval)
 {
-
+    
     int times = abs(to);
-    int *mCurrentCount;
-    mCurrentCount = &from;
+    mCurrentCountR = from;
+    mCurrentCountJ = from;
+    mCurrentCountY = from;
+    
     log("re!");
     lbl->setString(std::to_string(from));
     lbl->runAction(Repeat::create(Sequence::create(DelayTime::create(interval),
-                                                   CallFunc::create(CC_CALLBACK_0(HelloWorld::increaseCountRight, this, lbl, mCurrentCount)),
+                                                   CallFunc::create(CC_CALLBACK_0(HelloWorld::increaseCountRight, this, lbl)),
                                                    NULL), times));
     log("%d", times);
 }
 
-void HelloWorld::increaseCountRight(Label *lbl, int *mCurrentCount)
+void HelloWorld::increaseCountRight(Label *lbl)
 {
-    lbl->setString(std::to_string((*mCurrentCount)++)+std::string(" %"));
-}
-
-void HelloWorld::count1(Label *lbl, int from, int to, float interval)
-{
+    if(lbl->getTag() == 21) lbl->setString(std::to_string(++mCurrentCountR));
+    if(lbl->getTag() == 22) lbl->setString(std::to_string(++mCurrentCountJ));
+    if(lbl->getTag() == 23) lbl->setString(std::to_string(++mCurrentCountY));
     
-    int times = abs(to);
-    int *mCurrentCount1;
-    mCurrentCount1 = &from;
-    log("re!");
-    lbl->setString(std::to_string(from));
-    lbl->runAction(Repeat::create(Sequence::create(DelayTime::create(interval),
-                                                   CallFunc::create(CC_CALLBACK_0(HelloWorld::increaseCountRight1, this, lbl, mCurrentCount1)),
-                                                   NULL), 28));
-    log("%d", times);
+    //log("%d, %d, %d", mCurrentCountR, mCurrentCountJ, mCurrentCountY);
 }
-
-void HelloWorld::increaseCountRight1(Label *lbl, int *mCurrentCount1)
-{
-    lbl->setString(std::to_string((*mCurrentCount1)++)+std::string(" %"));
-}
-
-void HelloWorld::count2(Label *lbl, int from, int to, float interval)
-{
-    
-    int times = abs(to);
-    int *mCurrentCount2;
-    mCurrentCount2 = &from;
-    log("re!");
-    lbl->setString(std::to_string(from));
-    lbl->runAction(Repeat::create(Sequence::create(DelayTime::create(interval),
-                                                   CallFunc::create(CC_CALLBACK_0(HelloWorld::increaseCountRight2, this, lbl, mCurrentCount2)),
-                                                   NULL), 15));
-    log("%d", times);
-}
-
-void HelloWorld::increaseCountRight2(Label *lbl, int *mCurrentCount2)
-{
-    lbl->setString(std::to_string((*mCurrentCount2)++)+std::string(" %"));
-}
-
-
-
-/*
-void HelloWorld::increaseCountLeft(Label *lbl, int mCurrentCount)
-{
-    lbl->setString(std::to_string(--mCurrentCount)+std::string("%"));
-}
-*/
 
 
 void HelloWorld::displayBottomBar(float *Jptr, float *amptr, float *bmptr)

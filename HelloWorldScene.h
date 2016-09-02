@@ -13,7 +13,9 @@ private:
     bool _scrolling;
     cocos2d::Vec2 _lastPoint;
     cocos2d::Vec2 _firstPoint;
-    //int mCurrentCount;
+    int mCurrentCountR;
+    int mCurrentCountJ;
+    int mCurrentCountY;
     Label *labelofNo1_L;
     Label *labelofNo1_R;
     Label *labelofNo3_L;
@@ -40,12 +42,8 @@ public:
     void MakingChoice();
     void displayStatus(float *Jptr, float *amptr, float *bmptr);
     void count(Label *lbl, int from, int to, float interval);
-    void increaseCountRight(Label *lbl, int *mCurrentCount);
-    void count1(Label *lbl, int from, int to, float interval);
-    void increaseCountRight1(Label *lbl, int *mCurrentCount);
-    void count2(Label *lbl, int from, int to, float interval);
-    void increaseCountRight2(Label *lbl, int *mCurrentCount);
-    //void increaseCountLeft(Label *lbl, int *mCurrentCount);
+    void increaseCountRight(Label *lbl);
+    
     void displayBottomBar(float *Jptr, float *amptr, float *bmptr);
     
     void didFinishPickingWithResult(cocos2d::Texture2D* result);
