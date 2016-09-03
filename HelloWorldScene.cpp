@@ -53,24 +53,35 @@ void HelloWorld::MakingChoice()
     Backlayer->setTag(Cover_Choice);
     this->addChild(Backlayer);
     
-    auto magentaCircle = Sprite::create("circle(magenta).png");
-    magentaCircle->setAnchorPoint(Point(0.5, 0.5));
-    magentaCircle->setOpacity(30);
-    magentaCircle->setPosition(Point(visibleSize.width/2, visibleSize.height*0.6));
-    Backlayer->addChild(magentaCircle);
-
-    auto labelofCamera = Label::createWithSystemFont("Camera", "Thonburi", 30, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
-    labelofCamera->setColor(Color3B(0, 0, 0));
-    labelofCamera->setAnchorPoint(Point(0.5, 1));
-    labelofCamera->setPosition(Point(visibleSize.width*0.9, visibleSize.height/2));
+    auto iconCamera = Sprite::create("Icon-eto-camera.png");
+    iconCamera->setAnchorPoint(Point(0.5, 0.5));
+    iconCamera->setPosition(Point(visibleSize.width/2, visibleSize.height*0.6));
+    Backlayer->addChild(iconCamera);
     
+    auto iconPlus = Sprite::create("Icon-eto-plus.png");
+    iconPlus->setAnchorPoint(Point(0.5, 0.5));
+    iconPlus->setPosition(Point(visibleSize.width*0.56, visibleSize.height*0.625));
+    Backlayer->addChild(iconPlus);
+    
+    
+    auto iconBox = Sprite::create("minus.png");
+    iconBox->setAnchorPoint(Point(0.5, 0.5));
+    iconBox->setPosition(Point(visibleSize.width/2, visibleSize.height*0.2));
+    Backlayer->addChild(iconBox);
+    
+    auto labelofCamera = Label::createWithSystemFont("Something Else?", "Thonburi", 30, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
+    labelofCamera->setColor(Color3B(255, 255, 255));
+    labelofCamera->setAnchorPoint(Point(0.5, 1));
+    labelofCamera->setPosition(Point(visibleSize.width/2, visibleSize.height*0.218));
     Backlayer->addChild(labelofCamera);
     
+    /*
     auto labelofAlbum = Label::createWithSystemFont("Album", "Thonburi", 30, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
     labelofAlbum->setColor(Color3B(0, 0, 0));
     labelofAlbum->setAnchorPoint(Point(0.5, 1));
     labelofAlbum->setPosition(Point(visibleSize.width*0.1, visibleSize.height/2));
     Backlayer->addChild(labelofAlbum);
+    */
     
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
@@ -122,6 +133,8 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         BacklayerResult->setTag(Cover_Result);
         this->addChild(BacklayerResult);
         
+        
+        /*
         auto Greenlayer = LayerColor::create(Color4B(0, 150, 136, 255));
         Greenlayer->setContentSize(Size(visibleSize.width, visibleSize.height*0.38));
         Greenlayer->setPosition(Point(0, visibleSize.height*0.63));
@@ -131,7 +144,7 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         GreenBandlayer->setContentSize(Size(visibleSize.width, visibleSize.height*0.07));
         GreenBandlayer->setPosition(Point(0, visibleSize.height*0.57));
         BacklayerResult->addChild(GreenBandlayer);
-        
+        */
         
         
         //클리핑 이미지 배경 삽입(흰색)
@@ -142,7 +155,7 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         
         
         labelofstatusBar = Label::createWithSystemFont("CIECAM02 value", "Thonburi", 30, Size(700, 350), TextHAlignment::LEFT, TextVAlignment::TOP);
-        labelofstatusBar->setColor(Color3B(255, 255, 255));
+        labelofstatusBar->setColor(Color3B(0, 0, 0));
         labelofstatusBar->setAnchorPoint(Point(0.5, 1));
         labelofstatusBar->setPosition(Point(visibleSize.width/2, visibleSize.height*0.98));
         
@@ -189,13 +202,13 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, BacklayerResult);
         
         //클리핑 이미지 커버
-        
+        /*
         auto circleForClipping = Sprite::create("iosCircleOutline(big).png");
         circleForClipping->setPosition(Point(visibleSize.width/2, visibleSize.height*0.7));
         circleForClipping->setAnchorPoint(Point(0.5, 0.5));
         circleForClipping->setOpacity(80);
         BacklayerResult->addChild(circleForClipping);
-        
+        */
         
         
         
@@ -266,13 +279,13 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         labelofNo3_R->setPosition(Point(visibleSize.width*0.82, visibleSize.height*0.32));
         BacklayerResult->addChild(labelofNo3_R);
         
-        /*
+        
         //원형 구분용 드로우서클
         DrawNode *coverCircle = DrawNode::create();
         coverCircle->drawCircle(Vec2::ZERO, 300, 0, 360, false, 1, 1, Color4F(Color4B(200, 200, 200, 200)));
         coverCircle->setPosition(Point(visibleSize.width/2, visibleSize.height*0.7));
         BacklayerResult->addChild(coverCircle);
-        */
+        
         /*
         templayer = LayerColor::create(Color4B(100, 100, 100, 255), 200, 200);
         templayer->setPosition(Point(visibleSize.width/2, visibleSize.height*0));
@@ -329,19 +342,19 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         BacklayerResult->addChild(checkBoxOrange);
         
         
-        auto labelofBottom1 = Label::createWithSystemFont("Skin Color : Pale White with beige tint", "Thonburi", 25, Size(700, 50), TextHAlignment::LEFT, TextVAlignment::CENTER);
+        auto labelofBottom1 = Label::createWithSystemFont("Skin Color :", "Thonburi", 25, Size(700, 50), TextHAlignment::LEFT, TextVAlignment::CENTER);
         labelofBottom1->setColor(Color3B(0, 0, 0));
         labelofBottom1->setAnchorPoint(Point(0, 0.5));
         labelofBottom1->setPosition(Point(visibleSize.width*0.12, visibleSize.height*0.2));
         BacklayerResult->addChild(labelofBottom1);
         
-        auto labelofBottom2 = Label::createWithSystemFont("Dominant Undertone : Light-Cool(T 4,133K)", "Thonburi", 25, Size(700, 50), TextHAlignment::LEFT, TextVAlignment::CENTER);
+        auto labelofBottom2 = Label::createWithSystemFont("Dominant Undertone :", "Thonburi", 25, Size(700, 50), TextHAlignment::LEFT, TextVAlignment::CENTER);
         labelofBottom2->setColor(Color3B(0, 0, 0));
         labelofBottom2->setAnchorPoint(Point(0, 0.5));
         labelofBottom2->setPosition(Point(visibleSize.width*0.12, visibleSize.height*0.12));
         BacklayerResult->addChild(labelofBottom2);
         
-        auto labelofBottom3 = Label::createWithSystemFont("Recommended Color : Pink, Violet, Blue-based Red", "Thonburi", 25, Size(700, 50), TextHAlignment::LEFT, TextVAlignment::CENTER);
+        auto labelofBottom3 = Label::createWithSystemFont("Recommended Color :", "Thonburi", 25, Size(700, 50), TextHAlignment::LEFT, TextVAlignment::CENTER);
         labelofBottom3->setColor(Color3B(0, 0, 0));
         labelofBottom3->setAnchorPoint(Point(0, 0.5));
         labelofBottom3->setPosition(Point(visibleSize.width*0.12, visibleSize.height*0.04));

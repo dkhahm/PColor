@@ -54,6 +54,15 @@ void Intro::createIntroLayer(){
     this->addChild(Backlayer);
     
     
+    auto labelofCamera = Label::createWithSystemFont("Something Else?", "Thonburi", 40, Size(500, 150), TextHAlignment::CENTER, TextVAlignment::TOP);
+    labelofCamera->setColor(Color3B(0, 0, 0));
+    labelofCamera->setAnchorPoint(Point(0.5, 1));
+    labelofCamera->setPosition(Point(visibleSize.width/2, visibleSize.height*0.6));
+    Backlayer->addChild(labelofCamera);
+    
+    
+    
+    /*
     auto greenCircle = Sprite::create("circle(green).png");
     greenCircle->setAnchorPoint(Point(0.5, 0.5));
     greenCircle->setOpacity(60);
@@ -82,7 +91,7 @@ void Intro::createIntroLayer(){
     yellowCircle->runAction(actionToCenterwithPause->clone());
     greenCircle->runAction(actionToCenterwithPause->clone());
     
-
+    */
     /*
     //곰
     auto labelofIntro1 = Label::createWithSystemFont("G", "Thonburi", visibleSize.width*0.04, Size(visibleSize.width*0.2, visibleSize.height*0.2), TextHAlignment::CENTER, TextVAlignment::CENTER);
@@ -239,7 +248,7 @@ void Intro::createIntroLayer(){
     
     
     
-    FiniteTimeAction * action = Sequence::create(DelayTime::create(5.0f),
+    FiniteTimeAction * action = Sequence::create(DelayTime::create(2.0f),
                                                  CallFunc::create([=]{Intro::changeSceneToOpfromIntro();}),
                                                  NULL);
     this->runAction(action);
