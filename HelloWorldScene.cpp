@@ -8,6 +8,8 @@
 #define Current_Possition 16
 #define tempLayerForProgress 18
 
+//CheckColor* HelloWorld::temp = nullptr;
+
 
 USING_NS_CC;
 
@@ -359,6 +361,13 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         labelofBottom3->setAnchorPoint(Point(0, 0.5));
         labelofBottom3->setPosition(Point(visibleSize.width*0.12, visibleSize.height*0.04));
         BacklayerResult->addChild(labelofBottom3);
+        
+        /*
+        static CheckColor* temp;
+        temp = CheckColor::create();
+        temp->setParent(BacklayerResult);
+        BacklayerResult->addChild(temp);
+        */
     
     }
     

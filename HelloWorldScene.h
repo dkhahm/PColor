@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "ImagePicker.h"
 #include "RGB2JCH.h"
+#include "CheckColor.h"
 
 using namespace cocos2d;
 
@@ -20,10 +21,13 @@ private:
     Label *labelofNo1_R;
     Label *labelofNo3_L;
     Label *labelofNo3_R;
+    //static cocos2d::Scene* HelloWorld;
+    //CheckColor *temp;
     
 public:
     static cocos2d::Scene* createScene();
     double Rounding(double x, int digit);
+    
     
     
     void onTouchesEnded(const std::vector<Touch*>& touches, Event  *event);
