@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "ImagePicker.h"
 #include "RGB2JCH.h"
+#include "imageProcess.h"
 //#include "CheckColor.h"
 
 using namespace cocos2d;
@@ -44,6 +45,10 @@ public:
     
     virtual bool init();
     
+    ///////test
+    void tttTest();
+    ///////
+    
     void MakingChoice();
     void displayStatus(float *Jptr, float *amptr, float *bmptr);
     void count(Label *lbl, int from, int to, float interval);
@@ -52,7 +57,7 @@ public:
     
     void displayBottomBar(float *Jptr, float *amptr, float *bmptr);
     
-    void didFinishPickingWithResult(cocos2d::Texture2D* result);
+    void didFinishPickingWithResult(Image* result);
     void TrigerGetPixelData(Touch *touch);
     void getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, float *Tptr, float *hptr, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr, float *Qptr, float *acptr, float *bcptr, float *amptr, float *bmptr, float *asptr, float *bsptr);
     

@@ -67,12 +67,13 @@ using namespace cocos2d;
     }
     
     Director::getInstance()->getScheduler()->performFunctionInCocosThread([image]{
+        /*
         Texture2D* texture = new Texture2D();
         texture->initWithImage(image);
         texture->autorelease();
         image->release();
-        
-        ImagePicker::getInstance()->finishImage(texture);
+        */
+        ImagePicker::getInstance()->finishImage(image);
     });
     
     [picker.view removeFromSuperview];

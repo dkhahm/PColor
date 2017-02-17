@@ -44,6 +44,8 @@ bool HelloWorld::init()
     return true;
 }
 
+
+
 void HelloWorld::MakingChoice()
 {
     if (getChildByTag(Cover_Result))
@@ -122,7 +124,7 @@ void HelloWorld::MakingChoice()
 
 
 
-void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
+void HelloWorld::didFinishPickingWithResult(Image* result)
 {
     if (result != nullptr)
     {
@@ -188,12 +190,23 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         clipping->setAlphaThreshold(1.0);
         BacklayerResult->addChild(clipping);
         
-        auto colorImage = Sprite::createWithTexture(result);
+        
+        //image 를 가져와서 화면에 뿌려주는 부분
+        Texture2D* texture = new Texture2D();
+        texture->initWithImage(result);
+        texture->autorelease();
+        result->release();
+        
+        auto colorImage = Sprite::createWithTexture(texture);
         colorImage->setTag(Content_Image);
         colorImage->setPosition(visibleSize.width/2, visibleSize.height * 0.7);
         //colorImage->setContentSize(Size(visibleSize.width/2, visibleSize.height/2));
         colorImage->setAnchorPoint(Point(0.5, 0.5));
         clipping->addChild(colorImage);
+        
+        //imageProcess::imageProcess temp;
+        //temp.imageProcess::image2WhatIwant(colorImage, result);
+        
         
         _scrolling = false;
         
@@ -708,7 +721,8 @@ void HelloWorld::getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, flo
             
             /////////caculate h (CIECAM02)
             //RGB2JCH::RGB2JCH();
-            RGB2JCH::getCIECAM02h(rptr, gptr, bptr, Tptr, hptr, Hptr, cieaptr, ciebptr, Jptr, Cptr, Qptr, acptr, bcptr, amptr, bmptr, asptr, bsptr);
+            RGB2JCH::RGB2JCH temp;
+            temp.RGB2JCH::getCIECAM02h(rptr, gptr, bptr, Tptr, hptr, Hptr, cieaptr, ciebptr, Jptr, Cptr, Qptr, acptr, bcptr, amptr, bmptr, asptr, bsptr);
             
             
             

@@ -28,7 +28,7 @@ void ImagePicker::pickImage(ImagePickerDelegate *delegate) {
     ImagePickerImpl::openImage();
 }
 
-void ImagePicker::finishImage(cocos2d::Texture2D *image){
+void ImagePicker::finishImage(Image *image){
     if(_delegate != nullptr){
         _delegate->didFinishPickingWithResult(image);
     }
