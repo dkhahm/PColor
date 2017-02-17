@@ -7,6 +7,7 @@
 #define Content_Image 14
 #define Current_Possition 16
 #define tempLayerForProgress 18
+#define tempLayerForBottom 19
 
 //CheckColor* HelloWorld::temp = nullptr;
 
@@ -151,7 +152,7 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         
         //클리핑 이미지 배경 삽입(흰색)
         auto CoverCircleForClipping = Sprite::create("circle(white).png");
-        CoverCircleForClipping->setPosition(Point(visibleSize.width/2, visibleSize.height*0.752));
+        CoverCircleForClipping->setPosition(Point(visibleSize.width/2, visibleSize.height*0.7));
         CoverCircleForClipping->setAnchorPoint(Point(0.5, 0.5));
         BacklayerResult->addChild(CoverCircleForClipping);
         
@@ -297,6 +298,45 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         */
         
         
+        
+        /* 여기서부터 나스 립스틱 추천 부분인데... 삭제 예정
+        auto UpperlayerStatus = LayerColor::create(Color4B(255, 255, 255, 255));
+        UpperlayerStatus->setContentSize(Size(visibleSize.width, visibleSize.height*0.25));
+        UpperlayerStatus->setPosition(0, visibleSize.height);
+        BacklayerResult->addChild(UpperlayerStatus);
+        
+        
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        auto labelofstatusBartemp = Label::createWithSystemFont("NARS", "Thonburi", 30, Size(700, 350), TextHAlignment::LEFT, TextVAlignment::TOP);
+        labelofstatusBartemp->setColor(Color3B(0, 0, 0));
+        labelofstatusBartemp->setAnchorPoint(Point(0.5, 1));
+        labelofstatusBartemp->setPosition(Point(visibleSize.width/2, 1590));
+        
+        BacklayerResult->addChild(labelofstatusBartemp);
+        
+        DrawNode *dot1 = DrawNode::create();
+        dot1->drawDot(Vec2::ZERO, 80, Color4F(Color4B(255, 94, 0, 255)));
+        dot1->setPosition(Point(110, 1450));
+        BacklayerResult->addChild(dot1);
+        
+        DrawNode *dot2 = DrawNode::create();
+        dot2->drawDot(Vec2::ZERO, 80, Color4F(Color4B(255, 0, 0, 255)));
+        dot2->setPosition(Point(310, 1450));
+        BacklayerResult->addChild(dot2);
+        
+        DrawNode *dot3 = DrawNode::create();
+        dot3->drawDot(Vec2::ZERO, 80, Color4F(Color4B(235, 34, 90, 255)));
+        dot3->setPosition(Point(510, 1450));
+        BacklayerResult->addChild(dot3);
+        
+        DrawNode *dot4 = DrawNode::create();
+        dot4->drawDot(Vec2::ZERO, 80, Color4F(Color4B(204, 61, 61, 255)));
+        dot4->setPosition(Point(710, 1450));
+        BacklayerResult->addChild(dot4);
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        */
+         
+         
         auto BottomlayerStatus = LayerColor::create(Color4B(255, 255, 255, 255));
         BottomlayerStatus->setContentSize(Size(visibleSize.width, visibleSize.height*0.25));
         BacklayerResult->addChild(BottomlayerStatus);
@@ -323,10 +363,22 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
         gridlayer->setPosition(Point(visibleSize.width/2, visibleSize.height*0.25));
         BacklayerResult->addChild(gridlayer);
         
+        /*
         auto gridIcon = Sprite::create("iosBarcode.png");
         gridIcon->setAnchorPoint(Point(0.5, 0.5));
         gridIcon->setPosition(Point(visibleSize.width/2, visibleSize.height*0.25));
         BacklayerResult->addChild(gridIcon);
+        */
+        buttonNumber = 0;
+        auto buttonForScrollDown = Sprite::create("iosBarcode.png");
+        auto menuBox = MenuItemSprite::create(buttonForScrollDown, buttonForScrollDown, CC_CALLBACK_1(HelloWorld::scrollDown, this));
+        auto menu1 = Menu::create(menuBox, NULL);
+        //menu1->setIgnoreAnchorPointForPosition(false);
+        //menu1->setAnchorPoint(Point(0.5, 0.5));
+        menu1->alignItemsVerticallyWithPadding(0);
+        menu1->setPosition(Point(visibleSize.width/2, visibleSize.height*0.25));
+        BacklayerResult->addChild(menu1);
+        
         
         auto checkBoxRed = Sprite::create("CheckBox(red).png");
         checkBoxRed->setAnchorPoint(Point(0.5, 0.5));
@@ -415,6 +467,26 @@ void HelloWorld::didFinishPickingWithResult(cocos2d::Texture2D* result)
 */
 }
 
+void HelloWorld::scrollDown(Ref *sender)
+{
+    
+    /* socet 탑재!!!
+    if(buttonNumber == 0)
+    {
+        auto actionMoveToDown = MoveBy::create(0.2f, Point(0, -visibleSize.height*0.21));
+        this->runAction(actionMoveToDown);
+        buttonNumber = 1;
+    }
+    else
+    {
+        auto actionMoveToDown = MoveBy::create(0.2f, Point(0, visibleSize.height*0.21));
+        this->runAction(actionMoveToDown);
+        buttonNumber = 0;
+    }
+    */
+    
+    log("socet!");
+}
 
 
 void HelloWorld::onTouchesBegan(const std::vector<Touch*>& touches, Event  *event)
@@ -464,6 +536,21 @@ void HelloWorld::onTouchesEnded(const std::vector<Touch*>& touches, Event  *even
             log("%f", firstClick->getLocation().y);
             MakingChoice();
         }
+        /*
+        auto temp1 = LayerColor::create(Color4B(12, 12, 12, 100));
+        temp1->setContentSize(Size(80, 60));
+        temp1->setPosition(Point(visibleSize.width/2-40, visibleSize.height*0.23));
+        this->getChildByTag(Cover_Result)->addChild(temp1);
+        
+        
+        auto touchPoint = firstClick->getLocation();
+        Rect naviRect1 = Rect(visibleSize.width/2-40, visibleSize.height*0.23, 80, 60);
+        if (naviRect1.containsPoint(touchPoint)){
+            
+            log("1");
+        }
+         */
+        
         return;
     }
     
@@ -848,6 +935,49 @@ void HelloWorld::increaseCountRight(Label *lbl)
 
 void HelloWorld::displayBottomBar(float *Jptr, float *amptr, float *bmptr)
 {
+    
+    if (getChildByTag(Cover_Result)->getChildByTag(tempLayerForBottom))
+    {
+        this->getChildByTag(Cover_Result)->removeChildByTag(tempLayerForBottom);
+    }
+    int tempJ = *Jptr, tempa = *amptr, tempb = *bmptr;
+    std::string brightness, amPlusbm, amMinusbm;
+    
+    if(tempJ > 50) brightness = "Bright";
+    else brightness = "Dark";
+    if(tempa + tempb < 30) amPlusbm = "Pale";
+    else amPlusbm = "Tanned";
+    if(tempa - tempb > 0) amMinusbm = "Reddish";
+    else amMinusbm = "Yellowish";
+    
+    
+    auto layer_For_Bottom = LayerColor::create(Color4B(255, 255, 255, 0));
+    layer_For_Bottom->setContentSize(Size(visibleSize.width, visibleSize.height/2));
+    layer_For_Bottom->setTag(tempLayerForBottom);
+    this->getChildByTag(Cover_Result)->addChild(layer_For_Bottom);
+    
+    auto labelofBottom1 = Label::createWithSystemFont("", "Thonburi", 25, Size(700, 50), TextHAlignment::LEFT, TextVAlignment::CENTER);
+    labelofBottom1->setColor(Color3B(0, 0, 0));
+    labelofBottom1->setAnchorPoint(Point(0, 0.5));
+    labelofBottom1->setPosition(Point(visibleSize.width*0.31, visibleSize.height*0.2));
+    layer_For_Bottom->addChild(labelofBottom1);
+    labelofBottom1->setString(StringUtils::format("%s, %s, %s", brightness.c_str(), amPlusbm.c_str(), amMinusbm.c_str()));
+    
+    auto labelofBottom2 = Label::createWithSystemFont("Cool undertone", "Thonburi", 25, Size(700, 50), TextHAlignment::LEFT, TextVAlignment::CENTER);
+    labelofBottom2->setColor(Color3B(0, 0, 0));
+    labelofBottom2->setAnchorPoint(Point(0, 0.5));
+    labelofBottom2->setPosition(Point(visibleSize.width*0.49, visibleSize.height*0.12));
+    layer_For_Bottom->addChild(labelofBottom2);
+    
+    auto labelofBottom3 = Label::createWithSystemFont("To be later", "Thonburi", 25, Size(700, 50), TextHAlignment::LEFT, TextVAlignment::CENTER);
+    labelofBottom3->setColor(Color3B(0, 0, 0));
+    labelofBottom3->setAnchorPoint(Point(0, 0.5));
+    labelofBottom3->setPosition(Point(visibleSize.width*0.49, visibleSize.height*0.04));
+    layer_For_Bottom->addChild(labelofBottom3);
+    
+    
+    
+    
     
 }
 

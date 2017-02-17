@@ -56,7 +56,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0f / 60);
 
     // Set the design resolution
-    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
+    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::SHOW_ALL);
+    
+    /*
     auto frameSize = glview->getFrameSize();
     log("Framsize w : %f, H : %f", frameSize.width, frameSize.height);
     // ipad
@@ -92,7 +94,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
                                             iphone4ResolutionSize.width/designResolutionSize.width));
         log("iPhone 4 Resolution");
     }
-    
+    */
 
     register_all_packages();
 

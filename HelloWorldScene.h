@@ -4,7 +4,7 @@
 #include "cocos2d.h"
 #include "ImagePicker.h"
 #include "RGB2JCH.h"
-#include "CheckColor.h"
+//#include "CheckColor.h"
 
 using namespace cocos2d;
 
@@ -17,6 +17,7 @@ private:
     int mCurrentCountR;
     int mCurrentCountJ;
     int mCurrentCountY;
+    int buttonNumber;
     Label *labelofNo1_L;
     Label *labelofNo1_R;
     Label *labelofNo3_L;
@@ -47,6 +48,7 @@ public:
     void displayStatus(float *Jptr, float *amptr, float *bmptr);
     void count(Label *lbl, int from, int to, float interval);
     void increaseCountRight(Label *lbl);
+    void scrollDown(Ref *sender);
     
     void displayBottomBar(float *Jptr, float *amptr, float *bmptr);
     

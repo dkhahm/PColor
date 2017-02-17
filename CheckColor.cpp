@@ -12,7 +12,3 @@ bool CheckColor::init() {
     return true;
 }
 
-void CheckColor::startGameButtonCallback(Ref* pSender) {
-    Scene* resultSceneWithAnimation = TransitionFade::create(2.0f, Intro::createScene());
-    Director::getInstance()->replaceScene(resultSceneWithAnimation);
-}
