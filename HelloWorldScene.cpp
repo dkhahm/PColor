@@ -9,7 +9,7 @@
 #define tempLayerForProgress 18
 #define tempLayerForBottom 19
 
-//CheckColor* HelloWorld::temp = nullptr;
+
 
 
 USING_NS_CC;
@@ -153,11 +153,12 @@ void HelloWorld::didFinishPickingWithResult(Image* result)
         
         
         //클리핑 이미지 배경 삽입(흰색)
+        /*
         auto CoverCircleForClipping = Sprite::create("circle(white).png");
         CoverCircleForClipping->setPosition(Point(visibleSize.width/2, visibleSize.height*0.7));
         CoverCircleForClipping->setAnchorPoint(Point(0.5, 0.5));
         BacklayerResult->addChild(CoverCircleForClipping);
-        
+        */
         
         labelofstatusBar = Label::createWithSystemFont("CIECAM02 value", "Thonburi", 30, Size(700, 350), TextHAlignment::LEFT, TextVAlignment::TOP);
         labelofstatusBar->setColor(Color3B(0, 0, 0));
@@ -166,7 +167,7 @@ void HelloWorld::didFinishPickingWithResult(Image* result)
         
         BacklayerResult->addChild(labelofstatusBar);
         
-        
+        /*
         ////////////cliping
         auto drawCover = DrawNode::create();
         // 정점 좌표 설정
@@ -189,7 +190,7 @@ void HelloWorld::didFinishPickingWithResult(Image* result)
         //clipping->setInverted(true);
         clipping->setAlphaThreshold(1.0);
         BacklayerResult->addChild(clipping);
-        
+        */
         
         //image 를 가져와서 화면에 뿌려주는 부분
         Texture2D* texture = new Texture2D();
@@ -202,10 +203,10 @@ void HelloWorld::didFinishPickingWithResult(Image* result)
         colorImage->setPosition(visibleSize.width/2, visibleSize.height * 0.7);
         //colorImage->setContentSize(Size(visibleSize.width/2, visibleSize.height/2));
         colorImage->setAnchorPoint(Point(0.5, 0.5));
-        clipping->addChild(colorImage);
+        BacklayerResult->addChild(colorImage);
         
-        //imageProcess::imageProcess temp;
-        //temp.imageProcess::image2WhatIwant(colorImage, result);
+        imageProcess::imageProcess temp;
+        temp.imageProcess::image2WhatIwant(colorImage, result);
         
         
         _scrolling = false;

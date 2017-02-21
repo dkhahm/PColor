@@ -17,7 +17,7 @@
 
 using namespace cocos2d;
 
-class imageProcess
+class imageProcess : public cocos2d::Layer
 {
     
 private:

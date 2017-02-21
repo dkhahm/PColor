@@ -20,9 +20,20 @@ void imageProcess::image2WhatIwant(Sprite *pSpriteIView, Image *rawImage)
         cv::cvtColor(srcMat, greyMat, CV_BGR2GRAY);
         Image* grayImage = this->cvMat2ccImage(greyMat);
       */
+    Texture2D* texture = new Texture2D();
+    texture->initWithImage(rawImage);
+    //texture->autorelease();
+    //rawImage->release();
     
-    Image* srcImage = new Image();
-    srcImage = rawImage;
+    auto colorImage = Sprite::createWithTexture(texture);
+    
+    RenderTexture* r = RenderTexture::create(texture->getPixelsWide(), texture->getPixelsHigh());
+    r->beginWithClear(1, 1, 1, 0);
+    colorImage->visit();
+    r->end();
+    Image* srcImage = r->newImage();
+    
+    
     if(srcImage){
         log("srcImageLoad[OK]");
         cv::Mat srcMat = this->ccImage2cvMat(srcImage);
@@ -37,7 +48,7 @@ void imageProcess::image2WhatIwant(Sprite *pSpriteIView, Image *rawImage)
         if (texture && texture->initWithImage(grayImage)) {
             //texture->autorelease();
             //Sprite *pSpriteIView = (Sprite *)this->getChildByTag(1);
-            pSpriteIView->setTexture(texture);
+            //pSpriteIView->setTexture(texture);
         }
         //CC_SAFE_DELETE(texture);
         
@@ -55,7 +66,7 @@ void imageProcess::image2WhatIwant(Sprite *pSpriteIView, Image *rawImage)
 // ccSrite2cvMat変換
 cv::Mat imageProcess::ccImage2cvMat(cocos2d::Image* ccImage)
 {
-    // CCImageから一式情報展開
+    // Expansion of information from CCImage
     //総ピクセル数(unsigned int)
     int imageSize = (int)ccImage->getDataLen();
     log("-----imageSize:%d", imageSize);
@@ -67,8 +78,8 @@ cv::Mat imageProcess::ccImage2cvMat(cocos2d::Image* ccImage)
     //ピクセルデータ(配列)
     unsigned char * srcData = ccImage->getData();
     // (補足)
-    // unsigned charは8ビット(1バイト)のため、1ピクセルの情報を取り出すには4個単位で取り出さなければいけません。
-    // 1バイト単位で色情報がきまっており、赤、緑、青、透明度となっている。
+    // unsigned char : Since it is 8 bits (1 byte), in order to extract 1 pixel information, it must be taken out in units of 4 pieces.
+    // Color information is fixed in one byte unit, and it is red, green, blue, transparency.
     log("getNumberOfMipmaps:%d", ccImage->getNumberOfMipmaps());
     log("imageXW=%d, imageYW=%d", imageXW, imageYW);
     
@@ -79,13 +90,13 @@ cv::Mat imageProcess::ccImage2cvMat(cocos2d::Image* ccImage)
 // Raw2cvMat変換
 cv::Mat imageProcess::createCvMatFromRaw(unsigned char *rawData, int rawXW, int rawYW)
 {
-    // 展開先のMat用意
+    // Preparation of deployed Mat
     cv::Mat cvMat( rawYW, rawXW, CV_8UC4); // 8 bits per component, 4 channels
     
     for (int py=0; py<rawYW; py++) {
         for (int px=0; px<rawXW; px++) {
-            // この座標の画素情報をセット
-            //1ピクセルの情報を取り出す
+            // Set pixel information of this coordinates
+            //Extract 1 pixel information
             int nBasePos = ((rawXW * py)+px) * 4;
             cvMat.at<cv::Vec4b>(py, px) = cv::Vec4b(rawData[nBasePos + 0],  // 赤
                                                     rawData[nBasePos + 1],  // 緑

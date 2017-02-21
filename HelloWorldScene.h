@@ -5,7 +5,7 @@
 #include "ImagePicker.h"
 #include "RGB2JCH.h"
 #include "imageProcess.h"
-//#include "CheckColor.h"
+
 
 using namespace cocos2d;
 
@@ -23,8 +23,7 @@ private:
     Label *labelofNo1_R;
     Label *labelofNo3_L;
     Label *labelofNo3_R;
-    //static cocos2d::Scene* HelloWorld;
-    //CheckColor *temp;
+    
     
 public:
     static cocos2d::Scene* createScene();
