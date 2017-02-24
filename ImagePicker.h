@@ -9,7 +9,7 @@ class Texture2D;
 
 class ImagePickerDelegate {
 public:
-    virtual void didFinishPickingWithResult(Image* result) = 0;
+    virtual void didFinishPickingWithResult(cv::Mat test1) = 0;
     virtual ~ImagePickerDelegate() {};
 };
 
@@ -19,7 +19,7 @@ public:
     static ImagePicker *getInstance();
     
     void pickImage(ImagePickerDelegate *delegate);
-    void finishImage(Image *image);
+    void finishImage(cv::Mat test1);
 private:
     ImagePickerDelegate *_delegate;
 };

@@ -6,7 +6,7 @@
 
 #import "ImagePicker.h"
 #import "ImagePicker-ios.h"
-
+#import "UIImage2OpenCV.h"
 
 #include "cocos2d.h"
 
@@ -32,6 +32,8 @@ using namespace cocos2d;
     [imagePicker setDelegate:self];
     imagePicker.wantsFullScreenLayout = YES;
     
+    
+    
     // CCEAGLView is a subclass of UIView
     UIView *view = (UIView *)Director::getInstance()->getOpenGLView()->getEAGLView();
     [view addSubview:imagePicker.view];
@@ -47,6 +49,7 @@ using namespace cocos2d;
     //auto origin = Director::getInstance()->getVisibleOrigin();
     
     Image *image = new Image();
+    cv::Mat test1;
     
     @autoreleasepool
     {
@@ -54,7 +57,11 @@ using namespace cocos2d;
         //
         
         img = [self scaleImage:img toSize:CGSizeMake(visibleSize.width,visibleSize.height)]; // or some other size
-        //
+        
+        test1 = [img cvMatFromUIImage];
+        
+        
+        
         NSData *imgData = UIImagePNGRepresentation(img);
         NSUInteger len = [imgData length];
         
@@ -64,23 +71,25 @@ using namespace cocos2d;
         image->initWithImageData(byteData, len);
         
         free(byteData);
+        
+        
     }
     
-    Director::getInstance()->getScheduler()->performFunctionInCocosThread([image]{
+    
+    
+    Director::getInstance()->getScheduler()->performFunctionInCocosThread([test1]{
         /*
         Texture2D* texture = new Texture2D();
         texture->initWithImage(image);
         texture->autorelease();
         image->release();
         */
-        ImagePicker::getInstance()->finishImage(image);
+        ImagePicker::getInstance()->finishImage(test1);
     });
     
     [picker.view removeFromSuperview];
     [picker release];
 }
-
-
 
 -(UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)targetSize {
     
@@ -150,7 +159,7 @@ using namespace cocos2d;
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
     Director::getInstance()->getScheduler()->performFunctionInCocosThread([]{
-        ImagePicker::getInstance()->finishImage(nullptr);
+        //ImagePicker::getInstance()->finishImage(nullptr);
     });
     [picker.view removeFromSuperview];
     [picker release];

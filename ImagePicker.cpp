@@ -28,8 +28,8 @@ void ImagePicker::pickImage(ImagePickerDelegate *delegate) {
     ImagePickerImpl::openImage();
 }
 
-void ImagePicker::finishImage(Image *image){
+void ImagePicker::finishImage(cv::Mat test1){
     if(_delegate != nullptr){
-        _delegate->didFinishPickingWithResult(image);
+        _delegate->didFinishPickingWithResult(test1);
     }
 }

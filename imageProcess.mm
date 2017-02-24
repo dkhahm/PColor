@@ -7,8 +7,9 @@
 //
 
 #include "imageProcess.h"
+#import "UIImage2OpenCV.h"
 
-void imageProcess::image2WhatIwant(Sprite *pSpriteIView, Image *rawImage)
+void imageProcess::image2WhatIwant(cv::Mat result, Sprite* colorImage)
 {
     
     /*
@@ -18,37 +19,51 @@ void imageProcess::image2WhatIwant(Sprite *pSpriteIView, Image *rawImage)
         cv::Mat srcMat = this->ccImage2cvMat(srcImage);
         cv::Mat greyMat;
         cv::cvtColor(srcMat, greyMat, CV_BGR2GRAY);
+        
         Image* grayImage = this->cvMat2ccImage(greyMat);
-      */
-    Texture2D* texture = new Texture2D();
-    texture->initWithImage(rawImage);
-    //texture->autorelease();
-    //rawImage->release();
     
-    auto colorImage = Sprite::createWithTexture(texture);
     
-    RenderTexture* r = RenderTexture::create(texture->getPixelsWide(), texture->getPixelsHigh());
+    RenderTexture* r = RenderTexture::create(pSpriteIView->getTexture()->getPixelsWide(), pSpriteIView->getTexture()->getPixelsHigh());
     r->beginWithClear(1, 1, 1, 0);
-    colorImage->visit();
+    pSpriteIView->visit();
     r->end();
     Image* srcImage = r->newImage();
     
     
     if(srcImage){
+    
         log("srcImageLoad[OK]");
         cv::Mat srcMat = this->ccImage2cvMat(srcImage);
+        */
+    
         cv::Mat greyMat;
-        cv::cvtColor(srcMat, greyMat, CV_BGR2GRAY);
+        cv::cvtColor(result, greyMat, CV_BGR2GRAY);
+    
+    UIImage *car = [UIImage alloc];
+    Image* temp2=[car UIImageFromCVMat:greyMat];
+    //Image* temp2 = [car UIImageFromCVMat:result];
+    //Image* temp2 = this->cvMat2ccImage(result);
+    
+    
+    log("hello");
+    
+    Texture2D* texture = new Texture2D();
+    texture->initWithImage(temp2);
+    texture->autorelease();
+    //result->release();
+    colorImage->initWithTexture(texture);
+    
+    /*
         Image* grayImage = this->cvMat2ccImage(greyMat);
         
         
-        // 表示切り替え
+        // Switch display
         Texture2D* texture = new Texture2D();
         
         if (texture && texture->initWithImage(grayImage)) {
             //texture->autorelease();
             //Sprite *pSpriteIView = (Sprite *)this->getChildByTag(1);
-            //pSpriteIView->setTexture(texture);
+            pSpriteIView->setTexture(texture);
         }
         //CC_SAFE_DELETE(texture);
         
@@ -56,6 +71,7 @@ void imageProcess::image2WhatIwant(Sprite *pSpriteIView, Image *rawImage)
         log("srcImageLoad[NG]");
         
     }
+    */
     
 }
 
@@ -121,15 +137,15 @@ cocos2d::Image* imageProcess::cvMat2ccImage(cv::Mat cvMat)
     int width  = cvMat.cols;
     int height = cvMat.rows;
     
-    //log("elemSize:%d", elemSize);
-    //log("size:%d", size);
-    //log("width=%d, height=%d", width, height);
+    log("revers elemSize:%d", elemSize);
+    //log("revers size:%d", size);
+    log("revers width=%d, height=%d", width, height);
     
     
     unsigned char * pTempData = NULL;
     if(1==elemSize){
         log("gray-mode");
-        // グレースケール
+        // glayscale
         int bytesPerComponent = 4;
         long size = bytesPerComponent * width * height;
         pTempData = static_cast<unsigned char*>(malloc(size * sizeof(unsigned char)));
@@ -158,7 +174,7 @@ cocos2d::Image* imageProcess::cvMat2ccImage(cv::Mat cvMat)
         srcData = pTempData;
     } else {
         log("color-mode");
-        // カラー
+        // color
         srcData = (unsigned char *)cvMat.data;
     }
     long size = 4  * width * height;

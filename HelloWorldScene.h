@@ -56,7 +56,7 @@ public:
     
     void displayBottomBar(float *Jptr, float *amptr, float *bmptr);
     
-    void didFinishPickingWithResult(Image* result);
+    void didFinishPickingWithResult(cv::Mat result);
     void TrigerGetPixelData(Touch *touch);
     void getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, float *Tptr, float *hptr, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr, float *Qptr, float *acptr, float *bcptr, float *amptr, float *bmptr, float *asptr, float *bsptr);
     

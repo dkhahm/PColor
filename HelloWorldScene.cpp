@@ -1,6 +1,7 @@
 #include "HelloWorldScene.h"
 #include <vector>
 
+
 #define Cover_Choice 10
 #define Cover_Result 11
 #define Cover_Clipping 13
@@ -39,6 +40,7 @@ bool HelloWorld::init()
     //log("origin coor : %f, %f", origin.width, origin.height);
     
     MakingChoice();
+    
     
     
     return true;
@@ -124,9 +126,10 @@ void HelloWorld::MakingChoice()
 
 
 
-void HelloWorld::didFinishPickingWithResult(Image* result)
+void HelloWorld::didFinishPickingWithResult(cv::Mat result)
 {
-    if (result != nullptr)
+    
+    if (true)
     {
         if (getChildByTag(Cover_Choice))
         {
@@ -191,24 +194,22 @@ void HelloWorld::didFinishPickingWithResult(Image* result)
         clipping->setAlphaThreshold(1.0);
         BacklayerResult->addChild(clipping);
         */
-        
+    
         //image 를 가져와서 화면에 뿌려주는 부분
-        Texture2D* texture = new Texture2D();
-        texture->initWithImage(result);
-        texture->autorelease();
-        result->release();
-        
-        auto colorImage = Sprite::createWithTexture(texture);
+    
+        auto colorImage = Sprite::create();
         colorImage->setTag(Content_Image);
+        
         colorImage->setPosition(visibleSize.width/2, visibleSize.height * 0.7);
         //colorImage->setContentSize(Size(visibleSize.width/2, visibleSize.height/2));
         colorImage->setAnchorPoint(Point(0.5, 0.5));
         BacklayerResult->addChild(colorImage);
         
+    
         imageProcess::imageProcess temp;
-        temp.imageProcess::image2WhatIwant(colorImage, result);
-        
-        
+        temp.imageProcess::image2WhatIwant(result, colorImage);
+    
+    
         _scrolling = false;
         
         
@@ -217,6 +218,7 @@ void HelloWorld::didFinishPickingWithResult(Image* result)
         listener->onTouchesMoved = CC_CALLBACK_2(HelloWorld::onTouchesMoved, this);
         listener->onTouchesEnded = CC_CALLBACK_2(HelloWorld::onTouchesEnded, this);
         _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, BacklayerResult);
+        
         
         //클리핑 이미지 커버
         /*
@@ -227,12 +229,6 @@ void HelloWorld::didFinishPickingWithResult(Image* result)
         BacklayerResult->addChild(circleForClipping);
         */
         
-        
-        
-        
-        
-        //BacklayerResult->addChild(colorImage);
-        log("eh?");
     
         //동그라미 진도의 아래 깔리는 배경, 흰색 원
         auto circleForNo1 = Sprite::create("iosCircleOutline(black).png");
@@ -481,6 +477,8 @@ void HelloWorld::didFinishPickingWithResult(Image* result)
 */
 }
 
+
+
 void HelloWorld::scrollDown(Ref *sender)
 {
     
@@ -507,11 +505,11 @@ void HelloWorld::onTouchesBegan(const std::vector<Touch*>& touches, Event  *even
 {
     log("touch began");
     Touch *touch = touches.front();
-    auto clipper = this->getChildByTag(Cover_Result)->getChildByTag(Cover_Clipping);
-    Vec2 point = clipper->convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
+    //auto clipper = this->getChildByTag(Cover_Result)->getChildByTag(Cover_Clipping);
+    //Vec2 point = clipper->convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
    
-    _lastPoint = point;
-    _firstPoint = point;
+    _lastPoint = touch->getLocation();
+    _firstPoint = touch->getLocation();
     
     auto determinInOut = sqrtf(pow(std::abs(touch->getLocation().x - visibleSize.width/2), 2)+pow(std::abs(touch->getLocation().y - visibleSize.height * 0.7), 2));
     log("%f", determinInOut);
@@ -526,6 +524,7 @@ void HelloWorld::onTouchesBegan(const std::vector<Touch*>& touches, Event  *even
 
 void HelloWorld::onTouchesMoved(const std::vector<Touch*>& touches, Event  *event)
 {
+    /*
     log("touch moved");
     if (!_scrolling) return;
     Touch *touch = touches[0];
@@ -535,6 +534,7 @@ void HelloWorld::onTouchesMoved(const std::vector<Touch*>& touches, Event  *even
     auto content = clipper->getChildByTag(Content_Image);
     content->setPosition(content->getPosition() + diff);
     _lastPoint = point;
+     */
 }
 
 void HelloWorld::onTouchesEnded(const std::vector<Touch*>& touches, Event  *event)
@@ -608,10 +608,11 @@ void HelloWorld::TrigerGetPixelData(Touch *touch)
 
 void HelloWorld::getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, float *Tptr, float *hptr, float *Hptr, float *cieaptr, float *ciebptr, float *Jptr, float *Cptr, float *Qptr, float *acptr, float *bcptr, float *amptr, float *bmptr, float *asptr, float *bsptr)
 {
+    /*
     if (this->getChildByTag(Cover_Result)->getChildByTag(Cover_Clipping)->getChildByTag(Content_Image)->getChildByTag(Current_Possition))
     {
         this->getChildByTag(Cover_Result)->getChildByTag(Cover_Clipping)->getChildByTag(Content_Image)->removeChildByTag(Current_Possition);
-    }
+    }*/
     
     
     auto glView = Director::getInstance()->getOpenGLView();
@@ -701,9 +702,6 @@ void HelloWorld::getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, flo
             }
             
             
-            
-            
-            
             log("visible size : %f, %f", visibleSize.width, visibleSize.height);
             log("origin coor : %f, %f", origin.width, origin.height);
             log("framesize : %f, %f", frameSize.width, frameSize.height);
@@ -743,7 +741,7 @@ void HelloWorld::getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, flo
              content->setPosition(content->getPosition() + diff);
              _lastPoint = point;
             */
-            
+            /*
             auto tempImage = this->getChildByTag(Cover_Result)->getChildByTag(Cover_Clipping)->getChildByTag(Content_Image);
             auto tempPoint = tempImage->convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
             
@@ -764,7 +762,7 @@ void HelloWorld::getPixelData(Touch *touch, int *rptr, int *gptr, int *bptr, flo
             this->getChildByTag(Cover_Result)->getChildByTag(Cover_Clipping)->getChildByTag(Content_Image)->addChild(rectNode);
             //this->addChild(rectNode);
             rectNode->setTag(Current_Possition);
-            
+            */
         
         }
     }while(0);
