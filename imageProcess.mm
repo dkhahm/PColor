@@ -8,70 +8,73 @@
 
 #include "imageProcess.h"
 #import "UIImage2OpenCV.h"
+#include <vector>
 
 void imageProcess::image2WhatIwant(cv::Mat result, Sprite* colorImage)
 {
+    //1차 전처리
+    
+    
+    
+    
+    
+    
+    
+    cv::blur(result, result, cv::Size(3, 3));
+    //cv::Mat src_filtered;
+    //cv::bilateralFilter(result, src_filtered, 9, 15, 15);
+    
+    //2차 전처리
+    
+    cv::Mat img_ycbcr;
+    /*
+    IplImage* img = new IplImage(img_ycbcr);
+    IplImage* ycbcr = cvCreateImage(cvGetSize(img), 8, 3);
+    IplImage* cr = cvCreateImage(cvGetSize(img), 8, 1);
+    */
+    cv::cvtColor(result, img_ycbcr, CV_BGR2YCrCb);
+    std::vector<cv::Mat> channels;
+    cv::split(img_ycbcr, channels);
+    cv::Mat img_thres;
+    cv::threshold(channels[2], img_thres, 161, 255, CV_THRESH_BINARY);
+    //cvCvtColor(img, ycbcr, CV_BGR2YCrCb);
+    
+    int erosion_elem = 0;
+    int erosion_size = 0;
+    int dilation_elem = 0;
+    int dilation_size = 0;
+    int const max_elem = 2;
+    int const max_kernel_size = 21;
+    
+    cv::Mat elementErode = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2*erosion_size + 1, 2*erosion_size +1), cv::Point(erosion_size, erosion_size));
+    
+    cv::erode(img_thres, img_thres, elementErode);
+    
+    cv::Mat elementDilate = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(2*dilation_size + 1, 2*dilation_size +1), cv::Point(dilation_size, dilation_size));
+    
+    cv::dilate(img_thres, img_thres, elementDilate);
+    
+    
+    
+    
+    //cvSplit(ycbcr, NULL, cr, NULL, NULL);
+    //cvThreshold(cr, cr, 161, 255, CV_THRESH_BINARY);
+    
     
     /*
-    Image* srcImage = new Image();
-    if(srcImage->initWithImageFile("faceTest.png")){
-        log("srcImageLoad[OK]");
-        cv::Mat srcMat = this->ccImage2cvMat(srcImage);
-        cv::Mat greyMat;
-        cv::cvtColor(srcMat, greyMat, CV_BGR2GRAY);
-        
-        Image* grayImage = this->cvMat2ccImage(greyMat);
+    cv::Mat greyMat;
+    cv::cvtColor(result, greyMat, CV_BGR2YCrCb);
+    cv::inRange(greyMat, cv::Scalar(0, 133, 77), cv::Scalar(255, 173, 127), greyMat);
+    */
     
-    
-    RenderTexture* r = RenderTexture::create(pSpriteIView->getTexture()->getPixelsWide(), pSpriteIView->getTexture()->getPixelsHigh());
-    r->beginWithClear(1, 1, 1, 0);
-    pSpriteIView->visit();
-    r->end();
-    Image* srcImage = r->newImage();
-    
-    
-    if(srcImage){
-    
-        log("srcImageLoad[OK]");
-        cv::Mat srcMat = this->ccImage2cvMat(srcImage);
-        */
-    
-        cv::Mat greyMat;
-        cv::cvtColor(result, greyMat, CV_BGR2GRAY);
-    
-    UIImage *car = [UIImage alloc];
-    Image* temp2=[car UIImageFromCVMat:greyMat];
-    //Image* temp2 = [car UIImageFromCVMat:result];
-    //Image* temp2 = this->cvMat2ccImage(result);
-    
-    
-    log("hello");
+    UIImage *imageProcess = [UIImage alloc];
+    Image* processedImage = [imageProcess UIImageFromCVMat:img_thres];
     
     Texture2D* texture = new Texture2D();
-    texture->initWithImage(temp2);
+    texture->initWithImage(processedImage);
     texture->autorelease();
-    //result->release();
+    processedImage->release();
     colorImage->initWithTexture(texture);
-    
-    /*
-        Image* grayImage = this->cvMat2ccImage(greyMat);
-        
-        
-        // Switch display
-        Texture2D* texture = new Texture2D();
-        
-        if (texture && texture->initWithImage(grayImage)) {
-            //texture->autorelease();
-            //Sprite *pSpriteIView = (Sprite *)this->getChildByTag(1);
-            pSpriteIView->setTexture(texture);
-        }
-        //CC_SAFE_DELETE(texture);
-        
-    } else {
-        log("srcImageLoad[NG]");
-        
-    }
-    */
     
 }
 

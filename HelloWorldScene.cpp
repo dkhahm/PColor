@@ -209,6 +209,9 @@ void HelloWorld::didFinishPickingWithResult(cv::Mat result)
         imageProcess::imageProcess temp;
         temp.imageProcess::image2WhatIwant(result, colorImage);
     
+        auto widthTemp = colorImage->getContentSize().width;
+        auto heightTemp = colorImage->getContentSize().height;
+        log("%f, %f", widthTemp, heightTemp);
     
         _scrolling = false;
         

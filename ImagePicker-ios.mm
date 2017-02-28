@@ -55,12 +55,16 @@ using namespace cocos2d;
     {
         UIImage *img = [info objectForKey:UIImagePickerControllerOriginalImage];
         //
+        log("변환 전 너비 : %f", [img size].width);
+        log("변환 전 높이 : %f", [img size].height);
+        auto scaledWidth = [img size].width*visibleSize.height*0.7/[img size].height;
         
-        img = [self scaleImage:img toSize:CGSizeMake(visibleSize.width,visibleSize.height)]; // or some other size
+        img = [self scaleImage:img toSize:CGSizeMake(scaledWidth,visibleSize.height*0.7)]; // or some other size
         
         test1 = [img cvMatFromUIImage];
         
-        
+        log("변환 후 너비 : %f", [img size].width);
+        log("변환 후 높이 : %f", [img size].height);
         
         NSData *imgData = UIImagePNGRepresentation(img);
         NSUInteger len = [imgData length];
@@ -116,7 +120,7 @@ using namespace cocos2d;
         CGFloat heightFactor = targetHeight / height;
         
         if (widthFactor < heightFactor)
-            scaleFactor = widthFactor;
+            scaleFactor = heightFactor;
         else
             scaleFactor = heightFactor;
         
@@ -135,6 +139,7 @@ using namespace cocos2d;
     
     
     // this is actually the interesting part:
+    
     
     UIGraphicsBeginImageContext(targetSize);
     
