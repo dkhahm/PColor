@@ -14,12 +14,60 @@ void imageProcess::image2WhatIwant(cv::Mat result, Sprite* colorImage)
 {
     //1차 전처리
     
+    cv::CascadeClassifier face_classifier;
+    cv::CascadeClassifier eye_classifier;
+    
+    NSString *cascadePathforFaces = [[NSBundle mainBundle] pathForResource: @"haarcascade_frontalface_default" ofType:@"xml"];
+    NSString *cascadePathforEyes = [[NSBundle mainBundle] pathForResource: @"haarcascade_eye" ofType:@"xml"];
+    
+    if(!face_classifier.load([cascadePathforFaces UTF8String])||!eye_classifier.load([cascadePathforEyes UTF8String])){
+        log("haarcascade xml loading failed");
+    }
     
     
     
+    //Convert frame to gray scale and equalize
+    cv::Mat grayFrame;
+    cv::cvtColor(result, grayFrame, CV_BGR2GRAY);
+    cv::equalizeHist(grayFrame, grayFrame);
+    
+    //face detection routine
+    
+    //a vector array to store the face found
+    std::vector<cv::Rect> faces;
+    face_classifier.detectMultiScale(grayFrame, faces,
+                                     1.1, //increase search scale by 10% each pass
+                                     3,  // merge groups of three detections
+                                     CV_HAAR_FIND_BIGGEST_OBJECT|CV_HAAR_SCALE_IMAGE,
+                                     cv::Size(30, 30));
+    
+    for(int i = 0; i <faces.size() ; i++){
+        cv::Point lb(faces[i].x + faces[i].width, faces[i].y + faces[i].height);
+        cv::Point tr(faces[i].x, faces[i].y);
+        
+        cv::rectangle(result, lb, tr, cv::Scalar(0, 255, 0), 3, 4, 0);
+    
+        std::vector<cv::Rect> eyes;
+        
+        cv::Mat faceROI = grayFrame(faces[i]);
+        
+        //In each face, find eyes
+        eye_classifier.detectMultiScale(faceROI,
+                                        eyes,
+                                        1.1,
+                                        3,
+                                        0|CV_HAAR_SCALE_IMAGE,
+                                        cv::Size(30, 30));
+        for(int j = 0; j<(int)eyes.size();j++){
+            cv::Point center( faces[i].x + eyes[j].x + eyes[j].width*0.5, faces[i].y + eyes[j].y + eyes[j].height*0.5 );
+            int radius = cvRound( (eyes[j].width + eyes[j].height)*0.25 );
+            cv::circle(result, center, radius, cv::Scalar( 255, 0, 0 ), 4, 8, 0 );
+        }
+        
+    }
     
     
-    
+    /*
     cv::blur(result, result, cv::Size(3, 3));
     //cv::Mat src_filtered;
     //cv::bilateralFilter(result, src_filtered, 9, 15, 15);
@@ -27,11 +75,7 @@ void imageProcess::image2WhatIwant(cv::Mat result, Sprite* colorImage)
     //2차 전처리
     
     cv::Mat img_ycbcr;
-    /*
-    IplImage* img = new IplImage(img_ycbcr);
-    IplImage* ycbcr = cvCreateImage(cvGetSize(img), 8, 3);
-    IplImage* cr = cvCreateImage(cvGetSize(img), 8, 1);
-    */
+    
     cv::cvtColor(result, img_ycbcr, CV_BGR2YCrCb);
     std::vector<cv::Mat> channels;
     cv::split(img_ycbcr, channels);
@@ -53,7 +97,7 @@ void imageProcess::image2WhatIwant(cv::Mat result, Sprite* colorImage)
     cv::Mat elementDilate = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(2*dilation_size + 1, 2*dilation_size +1), cv::Point(dilation_size, dilation_size));
     
     cv::dilate(img_thres, img_thres, elementDilate);
-    
+    */
     
     
     
@@ -68,7 +112,7 @@ void imageProcess::image2WhatIwant(cv::Mat result, Sprite* colorImage)
     */
     
     UIImage *imageProcess = [UIImage alloc];
-    Image* processedImage = [imageProcess UIImageFromCVMat:img_thres];
+    Image* processedImage = [imageProcess UIImageFromCVMat:result];
     
     Texture2D* texture = new Texture2D();
     texture->initWithImage(processedImage);
