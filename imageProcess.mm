@@ -10,6 +10,8 @@
 #import "UIImage2OpenCV.h"
 #include <vector>
 
+
+
 void imageProcess::image2WhatIwant(cv::Mat result, Sprite* colorImage)
 {
     //1차 전처리
@@ -30,8 +32,9 @@ void imageProcess::image2WhatIwant(cv::Mat result, Sprite* colorImage)
     cv::Mat grayFrame;
     cv::cvtColor(result, grayFrame, CV_BGR2GRAY);
     cv::equalizeHist(grayFrame, grayFrame);
-    
+    std::vector<cv::Point> lipPos;
     //face detection routine
+    cv::Mat drawing;
     
     //a vector array to store the face found
     std::vector<cv::Rect> faces;
@@ -40,12 +43,15 @@ void imageProcess::image2WhatIwant(cv::Mat result, Sprite* colorImage)
                                      3,  // merge groups of three detections
                                      CV_HAAR_FIND_BIGGEST_OBJECT|CV_HAAR_SCALE_IMAGE,
                                      cv::Size(30, 30));
-    
+    //------------------------------------------------------------------
+    //------------------------------------------------------------------
+    //------------------------------------------------------------------
+    //------------------------------------------------------------------
     for(int i = 0; i <faces.size() ; i++){
         cv::Point lb(faces[i].x + faces[i].width, faces[i].y + faces[i].height);
         cv::Point tr(faces[i].x, faces[i].y);
         
-        cv::rectangle(result, lb, tr, cv::Scalar(0, 255, 0), 3, 4, 0);
+        //cv::rectangle(result, lb, tr, cv::Scalar(0, 255, 0), 3, 4, 0);
     
         std::vector<cv::Rect> eyes;
         
@@ -60,46 +66,91 @@ void imageProcess::image2WhatIwant(cv::Mat result, Sprite* colorImage)
                                         cv::Size(30, 30));
         for(int j = 0; j<(int)eyes.size();j++){
             cv::Point center( faces[i].x + eyes[j].x + eyes[j].width*0.5, faces[i].y + eyes[j].y + eyes[j].height*0.5 );
-            int radius = cvRound( (eyes[j].width + eyes[j].height)*0.25 );
-            cv::circle(result, center, radius, cv::Scalar( 255, 0, 0 ), 4, 8, 0 );
+            int radius = cvRound((eyes[j].width + eyes[j].height)*0.25);
+            //cv::circle(result, center, radius, cv::Scalar(0, 255, 0), 4, 8, 0);
+        }
+    
+        cv::Mat lipROI = result(cv::Rect(faces[i].x+faces[i].width*0.2, faces[i].y + faces[i].height*0.6, faces[i].width*0.6, faces[i].height*0.4));
+        cv::Point lbLip(faces[i].x + faces[i].width*0.8, faces[i].y + faces[i].height);
+        cv::Point trLip(faces[i].x+faces[i].width*0.2, faces[i].y + faces[i].height*0.6);
+        //cv::rectangle(result, lbLip, trLip, cv::Scalar(0, 255, 0), 3, 4, 0);
+        
+        
+        //cv::Mat src_filtered;
+        //cv::bilateralFilter(result, src_filtered, 9, 15, 15);
+        
+        //2차 전처리
+        
+        cv::Mat img_ycbcr;
+        cv::Mat img_gray;
+        cv::Mat img_thres;
+        
+        cv::cvtColor(lipROI, img_gray, CV_BGR2GRAY);
+        cv::blur(img_gray, img_gray, cv::Size(3, 3));
+        cv::GaussianBlur(img_gray, img_gray, cv::Size(3,3), 2);
+        
+        
+        cv::cvtColor(lipROI, img_ycbcr, CV_BGR2YCrCb);
+        std::vector<cv::Mat> channels;
+        cv::split(img_ycbcr, channels);
+        
+        cv::threshold(channels[2], img_thres, 161, 255, CV_THRESH_BINARY);
+        //cvCvtColor(img, ycbcr, CV_BGR2YCrCb);
+        
+        int erosion_elem = 0;
+        int erosion_size = 0;
+        int dilation_elem = 0;
+        int dilation_size = 0;
+        int const max_elem = 2;
+        int const max_kernel_size = 21;
+        
+        cv::Mat elementErode = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2*erosion_size + 1, 2*erosion_size +1), cv::Point(erosion_size, erosion_size));
+        
+        cv::erode(img_thres, img_thres, elementErode);
+        
+        cv::Mat elementDilate = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(2*dilation_size + 1, 2*dilation_size +1), cv::Point(dilation_size, dilation_size));
+        
+        cv::dilate(img_thres, img_thres, elementDilate);
+        
+        for(int x = 0;x<img_thres.rows;x++){
+            for(int y = 0;y<img_thres.cols;y++){
+                cv::Vec4b &pixel = lipROI.at<cv::Vec4b>(x, y);
+                if(img_thres.at<uchar>(x, y) == 255){
+                    //pixel[1] = 255;
+                    //lipROI.at<uchar>(x, y) = 240;  //왜 이놈으로 하면 좌표값이 어긋나지????
+                    //cv::Point temp = cv::Point(x, y);
+                    //lipPos.push_back(temp);
+                }
+                else{
+                    //pixel[3] = 0;
+                }
+                
+            }
         }
         
+        log("%d, %d, %d, %d", img_thres.cols, img_thres.rows, lipROI.cols, lipROI.rows);
+        //img_thres.copyTo(result(cv::Rect(faces[i].x+faces[i].width*0.2, faces[i].y + faces[i].height*0.5, img_thres.cols, img_thres.rows)));
+        
+        cv::Canny(img_gray, img_gray, 15, 45, 3);
+        /// Find contours
+        std::vector<std::vector<cv::Point> > contours;
+        std::vector<cv::Vec4i> hierarchy;
+        cv::RNG rng(12345);
+        cv::findContours(img_gray, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+        /// Draw contours
+        drawing = cv::Mat::zeros(img_gray.size(), CV_8UC3);
+        for (int h = 0; h< contours.size(); h++)
+        {
+            
+            cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+            cv::drawContours(result, contours, h, color, 2, 8, hierarchy, 0, cv::Point(faces[i].x+faces[i].width*0.2, faces[i].y + faces[i].height*0.6));
+        }
+        
+       
+        //------------------------------------------------------------------
+        //------------------------------------------------------------------
+        //------------------------------------------------------------------
     }
-    
-    
-    /*
-    cv::blur(result, result, cv::Size(3, 3));
-    //cv::Mat src_filtered;
-    //cv::bilateralFilter(result, src_filtered, 9, 15, 15);
-    
-    //2차 전처리
-    
-    cv::Mat img_ycbcr;
-    
-    cv::cvtColor(result, img_ycbcr, CV_BGR2YCrCb);
-    std::vector<cv::Mat> channels;
-    cv::split(img_ycbcr, channels);
-    cv::Mat img_thres;
-    cv::threshold(channels[2], img_thres, 161, 255, CV_THRESH_BINARY);
-    //cvCvtColor(img, ycbcr, CV_BGR2YCrCb);
-    
-    int erosion_elem = 0;
-    int erosion_size = 0;
-    int dilation_elem = 0;
-    int dilation_size = 0;
-    int const max_elem = 2;
-    int const max_kernel_size = 21;
-    
-    cv::Mat elementErode = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2*erosion_size + 1, 2*erosion_size +1), cv::Point(erosion_size, erosion_size));
-    
-    cv::erode(img_thres, img_thres, elementErode);
-    
-    cv::Mat elementDilate = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(2*dilation_size + 1, 2*dilation_size +1), cv::Point(dilation_size, dilation_size));
-    
-    cv::dilate(img_thres, img_thres, elementDilate);
-    */
-    
-    
     
     //cvSplit(ycbcr, NULL, cr, NULL, NULL);
     //cvThreshold(cr, cr, 161, 255, CV_THRESH_BINARY);
